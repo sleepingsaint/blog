@@ -12,14 +12,14 @@
 		{{ partial "navbar.html" . }}
 		<div class="series-container">
 			{{range .Site.Taxonomies.series}}
-			{{.Page.Kind}}
+			{{if eq .Page.Kind "taxonomy"}}
 			<div class="series-card">
 				<div class="card-header">
 					{{.Page.Title}}
 					<span
-						class="series-count"
-						title="This series contains {{.Count}} posts"
-						>{{.Count}}</span
+					class="series-count"
+					title="This series contains {{.Count}} posts"
+					>{{.Count}}</span
 					>
 				</div>
 				<div class="card-description">{{.Page.Description}}</div>
@@ -30,6 +30,7 @@
 					<a href="{{.Page.RelPermalink}}" class="series-card-btn">Explore</a>
 				</div>
 			</div>
+			{{end}}
 			{{end}}
 		</div>
 	</body>
