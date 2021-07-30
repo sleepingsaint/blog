@@ -11,20 +11,19 @@
 	<body>
 		{{ partial "navbar.html" . }}
 		<div class="series-container">
-			{{range .Site.Taxonomies.series}}
-			{{.Page.Kind}}
+			{{ range .Data.Pages}}
+			{{ $count := len .Data.Pages}}
 			<div class="series-card">
 				<div class="card-header">
-					{{.Page.Title}}
+					{{.Params.title}}
 					<span
-						class="series-count"
-						title="This series contains {{.Count}} posts"
-						>{{.Count}}</span
-					>
+					class="series-count"
+					title="This series contains {{$count}} posts"
+					>{{$count}}</span>
 				</div>
-				<div class="card-description">{{.Page.Description}}</div>
-				{{if .Page.Params.tags }}
-				<span>{{ range .Page.Params.tags}} #{{.}} {{end}} </span>
+				<div class="card-description">{{.Params.description}}</div>
+				{{if .Params.tags }}
+				<span>{{ range .Params.tags}} #{{.}} {{end}} </span>
 				{{end}}
 				<div>
 					<a href="{{.Page.RelPermalink}}" class="series-card-btn">Explore</a>

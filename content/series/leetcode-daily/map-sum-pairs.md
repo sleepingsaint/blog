@@ -3,7 +3,7 @@ title: "Map Sum Pairs"
 date: 2021-07-30T21:36:35+05:30
 draft: false
 tags: ["trie", "map", "unordered_map"]
-series: "LeetCode Daily"
+series: "leetcode-daily"
 ---
 
 # Map Sum Pairs

@@ -12,9 +12,7 @@ menu:
   main:
     - identifier: posts 
       name: posts
-      title: tags section
       url: posts/
-      weight: -110
     - identifier: series
       name: series
       url: series/
