@@ -1,0 +1,26 @@
+.series-container{
+	width: 60vw;
+	margin: 0 auto;
+}
+
+.series-card{
+	margin-bottom: 10px;
+	padding-bottom: 5px;
+}
+
+.series-count{
+	background-color: rgb(235, 118, 106);
+	color: white;
+	border-radius: 5px;
+	padding: 1px 2px;
+	font-size: small;
+}
+.card-header{
+	font-size: large;
+	font-weight: bold;
+	color: rgb(49, 49, 49);
+}
+.card-description{
+	color: gray;
+	margin-bottom: 0;
+}

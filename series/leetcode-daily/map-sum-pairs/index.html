@@ -1,0 +1,115 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Map Sum Pairs</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/series.list.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>series</a>
+</div>
+</div>
+<div class=post-container>
+<h1 id=map-sum-pairs>Map Sum Pairs</h1>
+<h2 id=question>Question</h2>
+<p>Implement the MapSum class:</p>
+<ul>
+<li>MapSum()
+<ul>
+<li>Initializes the MapSum object.</li>
+</ul>
+</li>
+<li>void insert(String key, int val)
+<ul>
+<li>Inserts the key-val pair into the map. If the key already existed, the original key-value pair will be overridden to the new one.</li>
+</ul>
+</li>
+<li>int sum(string prefix)
+<ul>
+<li>Returns the sum of all the pairs' value whose key starts with the prefix.</li>
+</ul>
+</li>
+</ul>
+<h2 id=constraints>Constraints</h2>
+<p>Constraints:</p>
+<ul>
+<li>1 &lt;= key.length, prefix.length &lt;= 50</li>
+<li>key and prefix consist of only lowercase English letters.</li>
+<li>1 &lt;= val &lt;= 1000</li>
+<li>At most 50 calls will be made to insert and sum.</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>In the question we can notice that, we need to retrieve all the strings which are having the given prefix. A <strong>Trie</strong> data structure would be right choice to implement that. From the question it is pretty clear that we can use <strong>map / unordered_map</strong> to retrieve the value of given key.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#75715e>// Defining the Trie class
+</span><span style=color:#75715e></span>	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Trie</span>{
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		Trie<span style=color:#f92672>*</span> children[<span style=color:#ae81ff>26</span>];
+	};
+
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>MapSum</span> {
+		unordered_map<span style=color:#f92672>&lt;</span>string, <span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> um;
+		Trie<span style=color:#f92672>*</span> trie <span style=color:#f92672>=</span> NULL;
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		<span style=color:#75715e>/** Initialize your data structure here. */</span>
+		MapSum() {
+			um.clear();
+			trie <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Trie();
+		}
+		
+		<span style=color:#66d9ef>void</span> <span style=color:#a6e22e>insert</span>(string key, <span style=color:#66d9ef>int</span> val) {
+			um[key] <span style=color:#f92672>=</span> val;
+			Trie<span style=color:#f92672>*</span> root <span style=color:#f92672>=</span> trie;
+			
+			<span style=color:#75715e>// building the Trie with given words
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>char</span> c: key){
+				<span style=color:#66d9ef>int</span> index <span style=color:#f92672>=</span> c <span style=color:#f92672>-</span> <span style=color:#e6db74>&#39;a&#39;</span>;
+				<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span>root<span style=color:#f92672>-&gt;</span>children[index])
+					root<span style=color:#f92672>-&gt;</span>children[index] <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Trie();
+				root <span style=color:#f92672>=</span> root<span style=color:#f92672>-&gt;</span>children[index];
+			}
+		}
+		
+		<span style=color:#66d9ef>int</span> <span style=color:#a6e22e>sum</span>(string prefix) {
+			<span style=color:#75715e>// getting the root with given prefix
+</span><span style=color:#75715e></span>			Trie<span style=color:#f92672>*</span> root <span style=color:#f92672>=</span> trie;
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>char</span> c: prefix){
+				<span style=color:#66d9ef>int</span> index <span style=color:#f92672>=</span> c <span style=color:#f92672>-</span> <span style=color:#e6db74>&#39;a&#39;</span>;
+				<span style=color:#75715e>// if given prefix doesn&#39;t exists return 0
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// since there exists no words with given prefix
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span>root<span style=color:#f92672>-&gt;</span>children[index])
+					<span style=color:#66d9ef>return</span> <span style=color:#ae81ff>0</span>;
+				root <span style=color:#f92672>=</span> root<span style=color:#f92672>-&gt;</span>children[index];
+			}
+			
+			<span style=color:#66d9ef>return</span> getSum(root, prefix);
+		}
+		
+		<span style=color:#75715e>// recursively computing the sum of the values of 
+</span><span style=color:#75715e></span>		<span style=color:#75715e>// words with given prefix
+</span><span style=color:#75715e></span>		<span style=color:#66d9ef>int</span> <span style=color:#a6e22e>getSum</span>(Trie<span style=color:#f92672>*</span> root, string str){
+			<span style=color:#66d9ef>int</span> sum <span style=color:#f92672>=</span> um[str];
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>26</span>; i<span style=color:#f92672>++</span>){
+				<span style=color:#66d9ef>if</span>(root<span style=color:#f92672>-&gt;</span>children[i]){
+					<span style=color:#66d9ef>char</span> c <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;a&#39;</span> <span style=color:#f92672>+</span> i;
+					sum <span style=color:#f92672>+=</span> getSum(root<span style=color:#f92672>-&gt;</span>children[i], str <span style=color:#f92672>+</span> c);
+				}
+			}
+			
+			<span style=color:#66d9ef>return</span> sum;
+		}
+	};
+
+</code></pre></div><blockquote>
+<p>Time Complexity: O(n), Space Complexity: O(n)</p>
+</blockquote>
+</div>
+</body>
+</html>

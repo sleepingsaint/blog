@@ -1,0 +1,28 @@
+:root {
+	font-family: sans-serif;
+}
+.navbar-container {
+	width: 60vw;
+	margin: 0 auto;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0 50px;
+	box-sizing: border-box;
+	z-index: 999;
+}
+
+.navbar-container h1 {
+	color: rgb(61, 58, 58);
+}
+
+.navbar-container a {
+	text-decoration: none;
+	color: rgb(54, 54, 54);
+	margin: 0 10px;
+}
+
+.post-container{
+	width: 60vw;
+	margin: 0 auto;
+}
