@@ -1,0 +1,10 @@
+<div class="navbar-container">
+	{{ $baseurl := .Site.BaseURL }}
+	<h1>{{ .Site.Title }}</h1>
+	<div>
+		<a href="{{$baseurl}}">Home</a>
+		{{range .Site.Menus.main}}
+				<a href="{{$baseurl}}{{ .URL }}">{{.Name}}</a>
+		{{end}}
+	</div>
+</div>

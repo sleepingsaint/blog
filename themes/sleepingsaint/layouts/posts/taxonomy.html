@@ -1,0 +1,5 @@
+{{.Page.Kind}}
+
+{{range .Data.Pages}}
+<a href="{{ .Page.RelPermalink }}">{{.Title}}</a>
+{{end}}

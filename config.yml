@@ -1,0 +1,20 @@
+baseURL: http://example.org/
+languageCode: en-us
+title: sleepingsaint
+theme: sleepingsaint
+
+taxonomies:
+  category: categories
+  tag: tags
+  series: series
+
+menu:
+  main:
+    - identifier: posts 
+      name: posts
+      title: tags section
+      url: posts/
+      weight: -110
+    - identifier: series
+      name: series
+      url: series/
