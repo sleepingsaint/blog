@@ -11,8 +11,11 @@ taxonomies:
 menu:
   main:
     - identifier: posts 
-      name: posts
+      name: Posts
       url: posts/
     - identifier: series
-      name: series
+      name: Series
       url: series/
+    - identifier: tags
+      name: Tags
+      url: tags/

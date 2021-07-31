@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="{{.Site.BaseURL}}css/series.list.css" />
+		<link rel="stylesheet" href="{{.Site.BaseURL}}css/index.css" />
+		<title>{{.Site.Title}} | Series</title>
+	</head>
+	<body>
+		{{ partial "navbar.html" . }}
+		<div class="series-container">
+			{{ range .Data.Pages}}
+			{{ $count := len .Data.Pages}}
+			<div class="series-card">
+				<div class="card-header">
+					{{.Params.title}}
+					<span
+					class="series-count"
+					title="This tag contains {{$count}} posts"
+					>{{$count}}</span>
+				</div>
+				<div class="card-description">{{.Params.description}}</div>
+				{{if .Params.tags }}
+				<span>{{ range .Params.tags}} #{{.}} {{end}} </span>
+				{{end}}
+				<div>
+					<a href="{{.Page.RelPermalink}}" class="series-card-btn">Explore</a>
+				</div>
+			</div>
+			{{end}}
+		</div>
+	</body>
+</html>
