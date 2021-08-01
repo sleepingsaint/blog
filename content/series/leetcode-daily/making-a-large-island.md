@@ -1,7 +1,7 @@
 ---
 title: "Making a Large Island"
 date: 2021-08-01T15:39:51+05:30
-draft: true
+draft: false
 tags: ["Union Find", "Disjoint Set"]
 series: "leetcode-daily" 
 ---
