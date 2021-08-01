@@ -16,4 +16,8 @@ series: "leetcode-daily"
 
 ## Code
 
+```cpp
+
+```
+
 ## Space and Time Complexity

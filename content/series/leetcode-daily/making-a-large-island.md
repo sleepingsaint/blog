@@ -41,6 +41,7 @@ A naive approach would be to run a helper function to calculate the largest isla
 ## Code
 
 ```cpp
+
 	// defining the union find class
 	class UnionFind{
 		private:
