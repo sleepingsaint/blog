@@ -41,7 +41,8 @@ Explanation: Can&rsquo;t change any 0 to 1, only one island with area = 4.</p>
 <h2 id=explanation>Explanation</h2>
 <p>A naive approach would be to run a helper function to calculate the largest island for every all <strong>0&rsquo;s</strong>. This would give us <strong>TLE (Time Limit Error)</strong> because the time complexity would be <strong>O(n^4)</strong>. A better approach would be to form all the islands with 1&rsquo;s and then for every 0 we encounter, we check if making this 0 as 1 would give us the more area / joins two islands together. Since we can multiple islands and we need to group them together the <strong>Disjoint Set / Union Find</strong> data structure would be a right fit for this problem. While performing the merging / union operation in Disjoint Set we also need to keep track of area of the current island.</p>
 <h2 id=code>Code</h2>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>	<span style=color:#75715e>// defining the union find class
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#75715e>// defining the union find class
 </span><span style=color:#75715e></span>	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>UnionFind</span>{
 		<span style=color:#66d9ef>private</span><span style=color:#f92672>:</span>
 			<span style=color:#75715e>// in this class the rank and path compression 
