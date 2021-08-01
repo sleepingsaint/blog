@@ -1,0 +1,172 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Making a Large Island</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>You are given an n x n binary matrix grid. You are allowed to change at most one 0 to be 1.
+Return the size of the largest island in grid after applying this operation.</p>
+<p>An island is a 4-directionally connected group of 1s.</p>
+<h2 id=examples>Examples</h2>
+<p>Input: grid = [[1,0],[0,1]]
+Output: 3
+Explanation: Change one 0 to 1 and connect two 1s, then we get an island with area = 3.</p>
+<p>Input: grid = [[1,1],[1,0]]
+Output: 4
+Explanation: Change the 0 to 1 and make the island bigger, only one island with area = 4.</p>
+<p>Input: grid = [[1,1],[1,1]]
+Output: 4
+Explanation: Can&rsquo;t change any 0 to 1, only one island with area = 4.</p>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>n == grid.length</li>
+<li>n == grid[i].length</li>
+<li>1 &lt;= n &lt;= 500</li>
+<li>grid[i][j] is either 0 or 1.</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>A naive approach would be to run a helper function to calculate the largest island for every all <strong>0&rsquo;s</strong>. This would give us <strong>TLE (Time Limit Error)</strong> because the time complexity would be <strong>O(n^4)</strong>. A better approach would be to form all the islands with 1&rsquo;s and then for every 0 we encounter, we check if making this 0 as 1 would give us the more area / joins two islands together. Since we can multiple islands and we need to group them together the <strong>Disjoint Set / Union Find</strong> data structure would be a right fit for this problem. While performing the merging / union operation in Disjoint Set we also need to keep track of area of the current island.</p>
+<h2 id=code>Code</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>	<span style=color:#75715e>// defining the union find class
+</span><span style=color:#75715e></span>	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>UnionFind</span>{
+		<span style=color:#66d9ef>private</span><span style=color:#f92672>:</span>
+			<span style=color:#75715e>// in this class the rank and path compression 
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// is used to reduce the time complexity
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>int</span> <span style=color:#f92672>*</span>parent, <span style=color:#f92672>*</span>rank, <span style=color:#f92672>*</span>area;
+
+		<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+			<span style=color:#75715e>// initializing the variables
+</span><span style=color:#75715e></span>			UnionFind(<span style=color:#66d9ef>int</span> n){
+				parent <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#66d9ef>int</span>[n];
+				rank <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#66d9ef>int</span>[n];
+				area <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#66d9ef>int</span>[n];
+				<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; i<span style=color:#f92672>++</span>){
+					parent[i] <span style=color:#f92672>=</span> i;
+					rank[i] <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+					area[i] <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>;
+				}
+			}
+		
+			<span style=color:#75715e>// get the parent of the given element
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>int</span> <span style=color:#a6e22e>find</span>(<span style=color:#66d9ef>int</span> n){
+				<span style=color:#66d9ef>if</span>(parent[n] <span style=color:#f92672>!=</span> n)
+					parent[n] <span style=color:#f92672>=</span> find(parent[n]);
+				<span style=color:#66d9ef>return</span> parent[n];
+			}
+			
+			<span style=color:#66d9ef>int</span> <span style=color:#a6e22e>getArea</span>(<span style=color:#66d9ef>int</span> n) {
+				<span style=color:#66d9ef>return</span> area[n];
+			}
+		
+			<span style=color:#75715e>// merging two elements together in a group
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>void</span> <span style=color:#a6e22e>merge</span>(<span style=color:#66d9ef>int</span> n, <span style=color:#66d9ef>int</span> m){
+				<span style=color:#66d9ef>int</span> par1 <span style=color:#f92672>=</span> find(n);
+				<span style=color:#66d9ef>int</span> par2 <span style=color:#f92672>=</span> find(m);
+				
+				<span style=color:#66d9ef>if</span>(par1 <span style=color:#f92672>==</span> par2) <span style=color:#66d9ef>return</span>;
+				
+				<span style=color:#75715e>// updating the parents, rank and area
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>if</span>(rank[par1] <span style=color:#f92672>&gt;</span> rank[par2]) {
+					parent[par2] <span style=color:#f92672>=</span> par1;
+					area[par1] <span style=color:#f92672>+=</span> area[par2];
+				}<span style=color:#66d9ef>else</span> <span style=color:#66d9ef>if</span>(rank[par2] <span style=color:#f92672>&gt;</span> rank[par1]) {
+					parent[par1] <span style=color:#f92672>=</span> par2;
+					area[par2] <span style=color:#f92672>+=</span> area[par1];
+				}<span style=color:#66d9ef>else</span> {
+					parent[par2] <span style=color:#f92672>=</span> par1;
+					rank[par1]<span style=color:#f92672>++</span>;
+					area[par1] <span style=color:#f92672>+=</span> area[par2];
+				}
+				
+			}
+	};
+
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		<span style=color:#66d9ef>int</span> largestIsland(vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;&amp;</span> grid) {
+			<span style=color:#66d9ef>int</span> rows <span style=color:#f92672>=</span> grid.size();
+			<span style=color:#66d9ef>int</span> cols <span style=color:#f92672>=</span> grid[<span style=color:#ae81ff>0</span>].size();
+			
+			UnionFind uf <span style=color:#f92672>=</span> UnionFind(rows <span style=color:#f92672>*</span> cols);
+
+			<span style=color:#66d9ef>int</span> dir_x[] <span style=color:#f92672>=</span> {<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>1</span>};
+			<span style=color:#66d9ef>int</span> dir_y[] <span style=color:#f92672>=</span> {<span style=color:#ae81ff>0</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>0</span>};
+			
+			<span style=color:#75715e>// forming the islands
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> rows; i<span style=color:#f92672>++</span>){
+				<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> j <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; j <span style=color:#f92672>&lt;</span> cols; j<span style=color:#f92672>++</span>){
+					<span style=color:#66d9ef>if</span>(grid[i][j] <span style=color:#f92672>==</span> <span style=color:#ae81ff>1</span>){
+						<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> k <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; k <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>4</span>; k<span style=color:#f92672>++</span>){
+							<span style=color:#66d9ef>int</span> nei_i <span style=color:#f92672>=</span> i <span style=color:#f92672>+</span> dir_x[k], nei_j <span style=color:#f92672>=</span> j <span style=color:#f92672>+</span> dir_y[k];
+							<span style=color:#75715e>// checking if the neigbhor indexes are still inside the grid
+</span><span style=color:#75715e></span>							<span style=color:#75715e>// and the neighbor is not 0
+</span><span style=color:#75715e></span>							<span style=color:#66d9ef>if</span>(nei_i <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>0</span> <span style=color:#f92672>||</span> nei_i <span style=color:#f92672>&gt;=</span> rows <span style=color:#f92672>||</span> nei_j <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>0</span> <span style=color:#f92672>||</span> nei_j <span style=color:#f92672>&gt;=</span> cols <span style=color:#f92672>||</span> grid[nei_i][nei_j] <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>)
+								<span style=color:#66d9ef>continue</span>;
+							<span style=color:#75715e>// adding the neigbhors to the island
+</span><span style=color:#75715e></span>							uf.merge(i<span style=color:#f92672>*</span>rows <span style=color:#f92672>+</span> j, nei_i<span style=color:#f92672>*</span>rows <span style=color:#f92672>+</span> nei_j);
+						}
+					}
+				}
+			}
+			
+			<span style=color:#75715e>// to check if the grid contains any zero
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// if no zero then ans would be rows*cols
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>bool</span> hasZero <span style=color:#f92672>=</span> false;
+			<span style=color:#66d9ef>int</span> ans <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>;
+
+			<span style=color:#75715e>// checking if there exists any 0 which can be changed to 1
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// to give more area
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> rows; i<span style=color:#f92672>++</span>){
+				<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> j <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; j <span style=color:#f92672>&lt;</span> cols; j<span style=color:#f92672>++</span>){
+					<span style=color:#66d9ef>if</span>(grid[i][j] <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>){
+						hasZero <span style=color:#f92672>=</span> true;
+
+						<span style=color:#75715e>// this set is check if the islands on the 
+</span><span style=color:#75715e></span>						<span style=color:#75715e>// four directions are different or same.
+</span><span style=color:#75715e></span>						set<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> roots;
+						<span style=color:#66d9ef>int</span> temp_area <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>;
+						<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> k <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; k <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>4</span>; k<span style=color:#f92672>++</span>){
+							<span style=color:#66d9ef>int</span> nei_i <span style=color:#f92672>=</span> i <span style=color:#f92672>+</span> dir_x[k], nei_j <span style=color:#f92672>=</span> j <span style=color:#f92672>+</span> dir_y[k];
+							
+							<span style=color:#75715e>// checking if the neigbhor indexes are still inside the grid
+</span><span style=color:#75715e></span>							<span style=color:#75715e>// and the neighbor is not 0
+</span><span style=color:#75715e></span>							<span style=color:#66d9ef>if</span>(nei_i <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>0</span> <span style=color:#f92672>||</span> nei_i <span style=color:#f92672>&gt;=</span> rows <span style=color:#f92672>||</span> nei_j <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>0</span> <span style=color:#f92672>||</span> nei_j <span style=color:#f92672>&gt;=</span> cols <span style=color:#f92672>||</span> grid[nei_i][nei_j] <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>)
+								<span style=color:#66d9ef>continue</span>;
+							<span style=color:#66d9ef>int</span> root <span style=color:#f92672>=</span> uf.find(nei_i<span style=color:#f92672>*</span>rows <span style=color:#f92672>+</span> nei_j);
+
+							<span style=color:#75715e>// checking if the island is not yet added
+</span><span style=color:#75715e></span>							<span style=color:#66d9ef>if</span>(roots.find(root) <span style=color:#f92672>==</span> roots.end()){
+								roots.insert(root);
+								temp_area <span style=color:#f92672>+=</span> uf.getArea(root);
+							}
+						}
+						
+						<span style=color:#75715e>// updating the answer after every loop
+</span><span style=color:#75715e></span>						ans <span style=color:#f92672>=</span> max(ans, temp_area);
+					}
+				}
+			}
+			<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span>hasZero) <span style=color:#66d9ef>return</span> rows<span style=color:#f92672>*</span>cols;
+			<span style=color:#66d9ef>return</span> ans;
+		}
+	}
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<p>Space Complexity: O(nm)
+Time Complexity: O(nm)</p>
+</div>
+</body>
+</html>
