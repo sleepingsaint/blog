@@ -167,5 +167,7 @@ A naive approach would be to run a helper function to calculate the largest isla
 ```
 ## Space and Time Complexity
 
-Space Complexity: O(nm)
-Time Complexity: O(nm)
+Space Complexity: O(n^2)
+Time Complexity: O(n^2)
+
+n - max(rows, cols)
