@@ -1,0 +1,75 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Two Sum</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.</p>
+<p>You may assume that each input would have <strong>exactly one solution</strong>, and you may not use the same element twice.</p>
+<p>You can return the answer in any order.</p>
+<h2 id=examples>Examples</h2>
+<p>Input: nums = [2,7,11,15], target = 9
+Output: [0,1]
+Output: Because nums[0] + nums[1] == 9, we return [0, 1].</p>
+<p>Input: nums = [3,2,4], target = 6
+Output: [1,2]</p>
+<p>Input: nums = [3,3], target = 6
+Output: [0,1]</p>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>2 &lt;= nums.length &lt;= 104</li>
+<li>-109 &lt;= nums[i] &lt;= 109</li>
+<li>-109 &lt;= target &lt;= 109</li>
+<li>Only one valid answer exists.</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>A naive approach would be to run a nested for loop and check if the two elements add up to the target or not. If it gets added up return those two indices. Time complexity of this approach would be <strong>O(n^2)</strong>.</p>
+<p>For a better solution we can use <strong>hashmap</strong> or <strong>map or unordered map</strong> in C++. The idea behind this approach is once we select a particular element in the array we check in the hashmap if there is a counter part which adds up with the selected element to form the target.</p>
+<p>Since there might be duplicates in the array, we store array of indices as value for the key as the element in array.</p>
+<h2 id=code>Code</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>	
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+    	vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> twoSum(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> nums, <span style=color:#66d9ef>int</span> target) {
+				unordered_map<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span>, vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;</span> um;
+				<span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> nums.size();
+				
+				<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; i<span style=color:#f92672>++</span>){
+					um[nums[i]].push_back(i);    
+				}
+				
+				<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; i<span style=color:#f92672>++</span>){
+					<span style=color:#66d9ef>int</span> k <span style=color:#f92672>=</span> target <span style=color:#f92672>-</span> nums[i];
+					<span style=color:#66d9ef>if</span>(um[k].size() <span style=color:#f92672>&gt;</span> <span style=color:#ae81ff>0</span>){
+						<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> j: um[k]){
+							<span style=color:#66d9ef>if</span>(i <span style=color:#f92672>!=</span> j)
+								<span style=color:#66d9ef>return</span> vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span>{i, j};
+						}
+					}
+				}
+				
+				<span style=color:#66d9ef>return</span> vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span>{<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>};
+			}
+		};
+	}
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<p>Space Complexity: O(n)
+Time Complexity: O(n) - single for loop and lookup in hashmap are of constant time</p>
+</div>
+</body>
+</html>
