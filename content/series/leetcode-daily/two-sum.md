@@ -2,7 +2,7 @@
 title: "Two Sum"
 date: 2021-08-02T12:51:20+05:30
 draft: false 
-tags: ["map", "unordered map"]
+tags: ["map", "unordered map", "hashmap"]
 series: "leetcode-daily" 
 ---
 

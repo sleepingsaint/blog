@@ -2,7 +2,7 @@
 title: "Map Sum Pairs"
 date: 2021-07-30T21:36:35+05:30
 draft: false
-tags: ["trie", "map", "unordered_map"]
+tags: ["trie", "map", "unordered_map", "hashmap"]
 series: "leetcode-daily"
 ---
 
