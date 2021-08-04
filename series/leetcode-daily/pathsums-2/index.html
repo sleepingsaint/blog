@@ -1,0 +1,107 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Pathsums 2</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>Given the root of a binary tree and an integer targetSum, return all root-to-leaf paths where each path&rsquo;s sum equals targetSum.</p>
+<p>A leaf is a node with no children.</p>
+<h2 id=examples>Examples</h2>
+<ul>
+<li>
+<p>Input: root = [5,4,8,11,null,13,4,7,2,null,null,5,1], targetSum = 22</p>
+</li>
+<li>
+<p>Output: [[5,4,11,2],[5,8,4,5]]</p>
+</li>
+<li>
+<p>Input: root = [1,2,3], targetSum = 5</p>
+</li>
+<li>
+<p>Output: []</p>
+</li>
+<li>
+<p>Input: root = [1,2], targetSum = 0</p>
+</li>
+<li>
+<p>Output: []</p>
+</li>
+</ul>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>The number of nodes in the tree is in the range [0, 5000].</li>
+<li>-1000 &lt;= Node.val &lt;= 1000</li>
+<li>-1000 &lt;= targetSum &lt;= 1000</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>Approach for this problem is straight forward. We go from the root to the leaf nodes and add the values along the path. After reaching the leaf node, if the total added value becomes equal to given target we add it to the answer.</p>
+<p>To iterate over the children nodes we can use the <strong>recursion</strong>. At every stage we remove the current node value from the target and check if we can form a path with current node as root and updated target (old target - current node value), if it can form a path we add it to the ans.</p>
+<h2 id=code>Code</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#75715e>/**
+</span><span style=color:#75715e>	* Definition for a binary tree node.
+</span><span style=color:#75715e>	* struct TreeNode {
+</span><span style=color:#75715e>	*     int val;
+</span><span style=color:#75715e>	*     TreeNode *left;
+</span><span style=color:#75715e>	*     TreeNode *right;
+</span><span style=color:#75715e>	*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+</span><span style=color:#75715e>	*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+</span><span style=color:#75715e>	*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+</span><span style=color:#75715e>	* };
+</span><span style=color:#75715e>	*/</span>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;</span> pathSum(TreeNode<span style=color:#f92672>*</span> root, <span style=color:#66d9ef>int</span> targetSum) {
+			vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;</span> res;
+
+			<span style=color:#75715e>// if there is no root there is no path
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span>root) <span style=color:#66d9ef>return</span> res;
+
+			<span style=color:#75715e>// checking at the leaf node
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span>root<span style=color:#f92672>-&gt;</span>left <span style=color:#f92672>&amp;&amp;</span> <span style=color:#f92672>!</span>root<span style=color:#f92672>-&gt;</span>right){
+				<span style=color:#66d9ef>if</span>(root<span style=color:#f92672>-&gt;</span>val <span style=color:#f92672>==</span> targetSum){
+					res.push_back(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span>{root<span style=color:#f92672>-&gt;</span>val});
+				}
+				<span style=color:#66d9ef>return</span> res;
+			}
+			
+			<span style=color:#75715e>// getting answers from the child nodes with target: targetSum - root-&gt;val 
+</span><span style=color:#75715e></span>			vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;</span> left <span style=color:#f92672>=</span> pathSum(root<span style=color:#f92672>-&gt;</span>left, targetSum <span style=color:#f92672>-</span> root<span style=color:#f92672>-&gt;</span>val);
+			vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;</span> right <span style=color:#f92672>=</span> pathSum(root<span style=color:#f92672>-&gt;</span>right, targetSum <span style=color:#f92672>-</span> root<span style=color:#f92672>-&gt;</span>val);
+			
+			<span style=color:#75715e>// if path exists we add the current root to the answers
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>for</span>(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> <span style=color:#f92672>&amp;</span>vec: left)
+				vec.insert(vec.begin(), root<span style=color:#f92672>-&gt;</span>val);
+			<span style=color:#66d9ef>for</span>(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> <span style=color:#f92672>&amp;</span>vec: right)
+				vec.insert(vec.begin(), root<span style=color:#f92672>-&gt;</span>val);
+			
+			<span style=color:#75715e>// add the children node answers to the current answer
+</span><span style=color:#75715e></span>			res.insert(res.end(), left.begin(), left.end());
+			res.insert(res.end(), right.begin(), right.end());
+			<span style=color:#66d9ef>return</span> res;
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<p>N - total number of nodes</p>
+<ul>
+<li>Time Complexity: O(N) - since we iterating every node only once.</li>
+<li>Space Complexity: O(N) - In the worst case scenario, we would be storing all the children nodes of the root.</li>
+</ul>
+</div>
+</body>
+</html>
