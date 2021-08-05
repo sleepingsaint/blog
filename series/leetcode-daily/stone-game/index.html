@@ -1,0 +1,134 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Stone Game</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>Alex and Lee play a game with piles of stones. There are an even number of piles arranged in a row, and each pile has a positive integer number of stones piles[i].</p>
+<p>The objective of the game is to end with the most stones. The total number of stones is odd, so there are no ties.</p>
+<p>Alex and Lee take turns, with Alex starting first. Each turn, a player takes the entire pile of stones from either the beginning or the end of the row. This continues until there are no more piles left, at which point the person with the most stones wins.</p>
+<p>Assuming Alex and Lee play optimally, return True if and only if Alex wins the game.</p>
+<h2 id=examples>Examples</h2>
+<ul>
+<li>Input: piles = [5,3,4,5]</li>
+<li>Output: true</li>
+<li>Explanation:
+Alex starts first, and can only take the first 5 or the last 5.
+Say he takes the first 5, so that the row becomes [3, 4, 5].
+If Lee takes 3, then the board is [4, 5], and Alex takes 5 to win with 10 points.
+If Lee takes the last 5, then the board is [3, 4], and Alex takes 4 to win with 9 points.
+This demonstrated that taking the first 5 was a winning move for Alex, so we return true.</li>
+</ul>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>2 &lt;= piles.length &lt;= 500</li>
+<li>piles.length is even.</li>
+<li>1 &lt;= piles[i] &lt;= 500</li>
+<li>sum(piles) is odd.</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>The first idea which pops up when we see this kind of problems is <strong>Greedy Approach</strong>. In greedy approach, both players tries to pick the bigger pile since the goal of the game is to end up with more number of stones. But this approach will fail for some cases. But in this question if we consider a situation where alex always picks the larger pile and lee picks the smaller pile this approach works fine.</p>
+<p>Next Approach would be to use <strong>Recursion</strong>. In every step, we pick elements from either ends, so there will be 4 cases.
+Consider we have piles from i to j. The four cases would be</p>
+<ul>
+<li>alex - ith, lee - (i + 1)th</li>
+<li>alex - ith, lee - jth</li>
+<li>alex - jth, lee - ith</li>
+<li>alex - jth, lee - (j - 1)th</li>
+</ul>
+<p>This way we compute at every step. If we have no piles left we return if count of alex > count of lee.</p>
+<p>We can improve the recursion approach using <strong>Dynamic Programming</strong>. We can store the answers of in (i, j) piles, if alex can win or not. In the recursion when ever we comes to point (i, j) we can decide whether to continue or not, base on</p>
+<p>dp(i, j) - indicates if alex can win for case of (i, j) piles</p>
+<ul>
+<li>If dp(i, j) is true, return true if (curr count of alex >= curr count of lee) else continue recursion</li>
+<li>If dp(i, j) is false, return false if(curr count of alex &lt;= curr count of lee) else continue recursion</li>
+</ul>
+<p>You can better understand the logic if you go through the code.</p>
+<h2 id=code>Code</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>	
+	<span style=color:#75715e>// greedy approach
+</span><span style=color:#75715e></span>	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;</span> dp;
+		
+		<span style=color:#66d9ef>bool</span> <span style=color:#a6e22e>stoneGame</span>(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> piles) {
+			<span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> piles.size();
+			
+			<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>, j <span style=color:#f92672>=</span> n <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>;
+			<span style=color:#66d9ef>int</span> alex <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>, lee <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+			
+			<span style=color:#66d9ef>while</span>(i <span style=color:#f92672>&lt;</span> j){
+				<span style=color:#66d9ef>if</span>(piles[i] <span style=color:#f92672>&lt;</span> piles[j])
+					alex <span style=color:#f92672>+=</span> piles[j<span style=color:#f92672>--</span>];
+				<span style=color:#66d9ef>else</span> alex <span style=color:#f92672>+=</span> piles[i<span style=color:#f92672>++</span>];
+				
+				<span style=color:#66d9ef>if</span>(piles[i] <span style=color:#f92672>&lt;</span> piles[j])
+					lee <span style=color:#f92672>+=</span> piles[i<span style=color:#f92672>++</span>];
+				<span style=color:#66d9ef>else</span> lee <span style=color:#f92672>+=</span> piles[j<span style=color:#f92672>--</span>];
+			}
+			
+			<span style=color:#66d9ef>return</span> (alex <span style=color:#f92672>&gt;</span> lee);
+		}
+	};
+
+</code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#75715e>// dynamic programming approach
+</span><span style=color:#75715e></span>	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;</span> dp;
+		
+		<span style=color:#66d9ef>bool</span> <span style=color:#a6e22e>stoneGame</span>(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> piles) {
+			<span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> piles.size();
+			
+			dp.resize(n, vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span>(n, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>));
+			<span style=color:#66d9ef>return</span> recursion(<span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>0</span>, n <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>, piles);
+		}
+		
+		<span style=color:#66d9ef>bool</span> <span style=color:#a6e22e>recursion</span>(<span style=color:#66d9ef>int</span> alex, <span style=color:#66d9ef>int</span> lee, <span style=color:#66d9ef>int</span> i, <span style=color:#66d9ef>int</span> j, vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> <span style=color:#f92672>&amp;</span>piles){
+			<span style=color:#66d9ef>if</span>(i <span style=color:#f92672>&gt;</span> j) 
+				<span style=color:#66d9ef>return</span> (alex <span style=color:#f92672>&gt;</span> lee);
+			
+			<span style=color:#66d9ef>if</span>(dp[i][j] <span style=color:#f92672>!=</span> <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>){
+				<span style=color:#66d9ef>if</span>(dp[i][j] <span style=color:#f92672>==</span> <span style=color:#ae81ff>1</span> <span style=color:#f92672>&amp;&amp;</span> alex <span style=color:#f92672>&gt;=</span> lee)
+					<span style=color:#66d9ef>return</span> true;
+				<span style=color:#66d9ef>if</span>(dp[i][j] <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span> <span style=color:#f92672>&amp;&amp;</span> alex <span style=color:#f92672>&lt;=</span> lee)
+					<span style=color:#66d9ef>return</span> true;
+			}
+			
+			<span style=color:#66d9ef>bool</span> ans <span style=color:#f92672>=</span> false;
+			ans <span style=color:#f92672>|=</span> recursion(alex <span style=color:#f92672>+</span> piles[i], lee <span style=color:#f92672>+</span> piles[i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>], i <span style=color:#f92672>+</span> <span style=color:#ae81ff>2</span>, j, piles);
+			<span style=color:#66d9ef>if</span>(ans) <span style=color:#66d9ef>return</span> dp[i][j] <span style=color:#f92672>=</span> true;
+			
+			ans <span style=color:#f92672>|=</span> recursion(alex <span style=color:#f92672>+</span> piles[i], lee <span style=color:#f92672>+</span> piles[j], i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, j <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>, piles);
+			<span style=color:#66d9ef>if</span>(ans) <span style=color:#66d9ef>return</span> dp[i][j] <span style=color:#f92672>=</span> true;
+			
+			ans <span style=color:#f92672>|=</span> recursion(alex <span style=color:#f92672>+</span> piles[j], lee <span style=color:#f92672>+</span> piles[j <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>], i, j <span style=color:#f92672>-</span> <span style=color:#ae81ff>2</span>, piles);
+			<span style=color:#66d9ef>if</span>(ans) <span style=color:#66d9ef>return</span> dp[i][j] <span style=color:#f92672>=</span> true;
+			
+			ans <span style=color:#f92672>|=</span> recursion(alex <span style=color:#f92672>+</span> piles[j], lee <span style=color:#f92672>+</span> piles[i], i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, j <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>, piles);
+			<span style=color:#66d9ef>return</span> dp[i][j] <span style=color:#f92672>=</span> ans;
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<ul>
+<li>Space Complexity: O(n*n) - for dp matrix and function stack</li>
+<li>Time Complexity: O(4 ^ (n / 2)) - every time the recursion call we calling 4 recursion calls and the piles becomes 0 in n / 2 time</li>
+</ul>
+</div>
+</body>
+</html>
