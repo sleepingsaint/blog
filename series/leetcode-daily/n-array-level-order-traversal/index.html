@@ -1,0 +1,85 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | N Array Level Order Traversal</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>Given an n-ary tree, return the level order traversal of its nodes' values.</p>
+<p>Nary-Tree input serialization is represented in their level order traversal, each group of children is separated by the null value (See examples).</p>
+<h2 id=examples>Examples</h2>
+<ul>
+<li>
+<p>Input: root = [1,null,3,2,4,null,5,6]</p>
+</li>
+<li>
+<p>Output: [[1],[3,2,4],[5,6]]</p>
+</li>
+<li>
+<p>Input: root = [1,null,2,3,4,5,null,null,6,7,null,8,null,9,10,null,null,11,null,12,null,13,null,null,14]</p>
+</li>
+<li>
+<p>Output: [[1],[2,3,4,5],[6,7,8,9,10],[11,12,13],[14]]</p>
+</li>
+</ul>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>The height of the n-ary tree is less than or equal to 1000</li>
+<li>The total number of nodes is between [0, 104]</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<h3 id=level-order-traversal>Level Order Traversal</h3>
+<p>As the name suggests we travese the tree level wise, first the root, then all the children of the root, then children of children of the root and so on.</p>
+<p>This question is extension of level order traversal of binary tree. Here instead of two children we can have multiple children, so we can use a for loop to iterate through the children.</p>
+<p>Since this is a <strong>bfs</strong> approach we can use <strong>queue</strong> data structure to do the traversal. We first insert the root in the queue and then iterate over the root children and so on.</p>
+<h2 id=code>Code</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;</span> levelOrder(Node<span style=color:#f92672>*</span> root) {
+			vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;</span> ans;
+			<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span>root) <span style=color:#66d9ef>return</span> ans;
+			
+			queue<span style=color:#f92672>&lt;</span>Node<span style=color:#f92672>*&gt;</span> q;
+			q.push(root);
+			
+			<span style=color:#66d9ef>while</span>(<span style=color:#f92672>!</span>q.empty()){
+				vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> tmp;
+				<span style=color:#66d9ef>int</span> size <span style=color:#f92672>=</span> q.size();
+				<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> size; i<span style=color:#f92672>++</span>){
+					Node<span style=color:#f92672>*</span> node <span style=color:#f92672>=</span> q.front();
+					q.pop();
+					tmp.push_back(node<span style=color:#f92672>-&gt;</span>val);
+					
+					<span style=color:#66d9ef>for</span>(Node<span style=color:#f92672>*</span> child: node<span style=color:#f92672>-&gt;</span>children)
+						q.push(child);
+				}
+				ans.push_back(tmp);
+			}
+			
+			<span style=color:#66d9ef>return</span> ans;
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<ul>
+<li>Space - O(N)</li>
+<li>Time - O(N)</li>
+</ul>
+<p>where N is total number of nodes in the tree</p>
+</div>
+</body>
+</html>
