@@ -16,6 +16,7 @@ Nary-Tree input serialization is represented in their level order traversal, eac
 
 * Input: root = [1,null,3,2,4,null,5,6]
 * Output: [[1],[3,2,4],[5,6]]
+<hr />
 
 * Input: root = [1,null,2,3,4,5,null,null,6,7,null,8,null,9,10,null,null,11,null,12,null,13,null,null,14]
 * Output: [[1],[2,3,4,5],[6,7,8,9,10],[11,12,13],[14]]
@@ -40,7 +41,7 @@ Since this is a __bfs__ approach we can use __queue__ data structure to do the t
 
 	class Solution {
 	public:
-		vector<vector<int>> levelOrder(Node* root) {
+		vector<vector<int>> leve<hr />lOrder(Node* root) {
 			vector<vector<int>> ans;
 			if(!root) return ans;
 			
@@ -68,6 +69,7 @@ Since this is a __bfs__ approach we can use __queue__ data structure to do the t
 ```
 
 ## Space and Time Complexity
+
 * Space - O(N)
 * Time - O(N)
 

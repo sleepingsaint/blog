@@ -13,11 +13,13 @@ The solution set must not contain duplicate subsets. Return the solution in any 
 
 ## Examples
 
-Input: nums = [1,2,2]
-Output: [[],[1],[1,2],[1,2,2],[2],[2,2]]
+* Input: nums = [1,2,2]
+* Output: [[],[1],[1,2],[1,2,2],[2],[2,2]]
 
-Input: nums = [0]
-Output: [[],[0]]
+<hr />
+
+* Input: nums = [0]
+* Output: [[],[0]]
 
 ## Constraints
 
@@ -70,5 +72,5 @@ This problem is similar to generating all the subsets but catch is to avoid dupl
 
 ## Space and Time Complexity
 
-Time Complexity: O(2^n) - n is number of elements in nums array
-Space Complexity: O(2^n) - In the worst case we store all the subsets string representations.
+* Time Complexity: O(2^n) - n is number of elements in nums array
+* Space Complexity: O(2^n) - In the worst case we store all the subsets string representations.

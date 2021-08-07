@@ -96,5 +96,7 @@ In the question we can notice that, we need to retrieve all the strings which ar
 	};
 
 ```
+## Space and Time Complexity
 
-> Time Complexity: O(n), Space Complexity: O(n) 
+* Time Complexity: O(n)
+* Space Complexity: O(n) 

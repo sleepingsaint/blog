@@ -19,3 +19,8 @@ menu:
     - identifier: tags
       name: Tags
       url: tags/
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true

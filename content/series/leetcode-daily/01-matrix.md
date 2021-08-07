@@ -15,9 +15,13 @@ The distance between two adjacent cells is 1.
 ## Examples
 
 Input: mat = [[0,0,0],[0,1,0],[0,0,0]]
+
 Output: [[0,0,0],[0,1,0],[0,0,0]]
 
+<hr />
+
 Input: mat = [[0,0,0],[0,1,0],[1,1,1]]
+
 Output: [[0,0,0],[0,1,0],[1,2,1]]
 
 ## Constraints
@@ -34,6 +38,8 @@ Output: [[0,0,0],[0,1,0],[1,2,1]]
 Since the matrix is a 2 Dimensional space we can start searching from individual __1's__ till we find a __0__. The distance along this path might be shortest distance or might not be. If it is we update the answer if not we break the search along the current path and do it another path. 
 
 I started the __bfs (Breadth First Search)__ search from __0's__ instead of __1__ and updated the distances of __1's__ if I encountered any. So we use __queue__ data structure for the bfs. Once we are at an element be it either 1 or 0 we update all the neighbors and if any neighbor gets updated we push that neighbor into the queue and continue to update the path along that neighbor.
+
+## Code
 
 ```cpp
 
@@ -85,7 +91,10 @@ I started the __bfs (Breadth First Search)__ search from __0's__ instead of __1_
 			return ans;
 		}
 	};
+
 ```
+
+## Space and Time Complexity
 
 * Time Complexity: O(nm) - for iterating over all the nodes
 * Space Complexity: O(2nm)) - for storing the ans and at worst condition the whole matix is of 0's for queue stores all the nm nodes again hence 2(nm);

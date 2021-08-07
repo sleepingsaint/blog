@@ -16,15 +16,19 @@ You can return the answer in any order.
 
 ## Examples
 
-Input: nums = [2,7,11,15], target = 9
-Output: [0,1]
-Output: Because nums[0] + nums[1] == 9, we return [0, 1].
+* Input: nums = [2,7,11,15], target = 9
+* Output: [0,1]
+* Output: Because nums[0] + nums[1] == 9, we return [0, 1].
 
-Input: nums = [3,2,4], target = 6
-Output: [1,2]
+<hr />
 
-Input: nums = [3,3], target = 6
-Output: [0,1]
+* Input: nums = [3,2,4], target = 6
+* Output: [1,2]
+
+<hr />
+
+* Input: nums = [3,3], target = 6
+* Output: [0,1]
 
 ## Constraints
 
@@ -74,5 +78,5 @@ Since there might be duplicates in the array, we store array of indices as value
 
 ## Space and Time Complexity
 
-Space Complexity: O(n) 
-Time Complexity: O(n) - single for loop and lookup in hashmap are of constant time
+* Space Complexity: O(n) 
+* Time Complexity: O(n) - single for loop and lookup in hashmap are of constant time

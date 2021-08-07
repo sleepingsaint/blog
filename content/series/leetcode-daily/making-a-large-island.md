@@ -16,15 +16,25 @@ An island is a 4-directionally connected group of 1s.
 ## Examples
 
 Input: grid = [[1,0],[0,1]]
+
 Output: 3
+
 Explanation: Change one 0 to 1 and connect two 1s, then we get an island with area = 3.
 
+<hr />
+
 Input: grid = [[1,1],[1,0]]
+
 Output: 4
+
 Explanation: Change the 0 to 1 and make the island bigger, only one island with area = 4.
 
+<hr />
+
 Input: grid = [[1,1],[1,1]]
+
 Output: 4
+
 Explanation: Can't change any 0 to 1, only one island with area = 4.
 
 ## Constraints
@@ -168,7 +178,7 @@ A naive approach would be to run a helper function to calculate the largest isla
 ```
 ## Space and Time Complexity
 
-Space Complexity: O(n^2)
-Time Complexity: O(n^2)
+* Space Complexity: O(n^2)
+* Time Complexity: O(n^2)
 
 n - max(rows, cols)
