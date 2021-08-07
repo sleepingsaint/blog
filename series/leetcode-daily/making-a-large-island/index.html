@@ -22,15 +22,17 @@
 Return the size of the largest island in grid after applying this operation.</p>
 <p>An island is a 4-directionally connected group of 1s.</p>
 <h2 id=examples>Examples</h2>
-<p>Input: grid = [[1,0],[0,1]]
-Output: 3
-Explanation: Change one 0 to 1 and connect two 1s, then we get an island with area = 3.</p>
-<p>Input: grid = [[1,1],[1,0]]
-Output: 4
-Explanation: Change the 0 to 1 and make the island bigger, only one island with area = 4.</p>
-<p>Input: grid = [[1,1],[1,1]]
-Output: 4
-Explanation: Can&rsquo;t change any 0 to 1, only one island with area = 4.</p>
+<p>Input: grid = [[1,0],[0,1]]</p>
+<p>Output: 3</p>
+<p>Explanation: Change one 0 to 1 and connect two 1s, then we get an island with area = 3.</p>
+<hr>
+<p>Input: grid = [[1,1],[1,0]]</p>
+<p>Output: 4</p>
+<p>Explanation: Change the 0 to 1 and make the island bigger, only one island with area = 4.</p>
+<hr>
+<p>Input: grid = [[1,1],[1,1]]</p>
+<p>Output: 4</p>
+<p>Explanation: Can&rsquo;t change any 0 to 1, only one island with area = 4.</p>
 <h2 id=constraints>Constraints</h2>
 <ul>
 <li>n == grid.length</li>
@@ -166,8 +168,10 @@ Explanation: Can&rsquo;t change any 0 to 1, only one island with area = 4.</p>
 		}
 	}
 </code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
-<p>Space Complexity: O(n^2)
-Time Complexity: O(n^2)</p>
+<ul>
+<li>Space Complexity: O(n^2)</li>
+<li>Time Complexity: O(n^2)</li>
+</ul>
 <p>n - max(rows, cols)</p>
 </div>
 </body>

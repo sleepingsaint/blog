@@ -21,10 +21,11 @@
 <p>Given an m x n binary matrix mat, return the distance of the nearest 0 for each cell.</p>
 <p>The distance between two adjacent cells is 1.</p>
 <h2 id=examples>Examples</h2>
-<p>Input: mat = [[0,0,0],[0,1,0],[0,0,0]]
-Output: [[0,0,0],[0,1,0],[0,0,0]]</p>
-<p>Input: mat = [[0,0,0],[0,1,0],[1,1,1]]
-Output: [[0,0,0],[0,1,0],[1,2,1]]</p>
+<p>Input: mat = [[0,0,0],[0,1,0],[0,0,0]]</p>
+<p>Output: [[0,0,0],[0,1,0],[0,0,0]]</p>
+<hr>
+<p>Input: mat = [[0,0,0],[0,1,0],[1,1,1]]</p>
+<p>Output: [[0,0,0],[0,1,0],[1,2,1]]</p>
 <h2 id=constraints>Constraints</h2>
 <ul>
 <li>m == mat.length</li>
@@ -37,6 +38,7 @@ Output: [[0,0,0],[0,1,0],[1,2,1]]</p>
 <h2 id=explanation>Explanation</h2>
 <p>Since the matrix is a 2 Dimensional space we can start searching from individual <strong>1&rsquo;s</strong> till we find a <strong>0</strong>. The distance along this path might be shortest distance or might not be. If it is we update the answer if not we break the search along the current path and do it another path.</p>
 <p>I started the <strong>bfs (Breadth First Search)</strong> search from <strong>0&rsquo;s</strong> instead of <strong>1</strong> and updated the distances of <strong>1&rsquo;s</strong> if I encountered any. So we use <strong>queue</strong> data structure for the bfs. Once we are at an element be it either 1 or 0 we update all the neighbors and if any neighbor gets updated we push that neighbor into the queue and continue to update the path along that neighbor.</p>
+<h2 id=code>Code</h2>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
 	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
 	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
@@ -86,7 +88,9 @@ Output: [[0,0,0],[0,1,0],[1,2,1]]</p>
 			<span style=color:#66d9ef>return</span> ans;
 		}
 	};
-</code></pre></div><ul>
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<ul>
 <li>Time Complexity: O(nm) - for iterating over all the nodes</li>
 <li>Space Complexity: O(2nm)) - for storing the ans and at worst condition the whole matix is of 0&rsquo;s for queue stores all the nm nodes again hence 2(nm);</li>
 </ul>

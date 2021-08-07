@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>string on sleepingsaint</title><link>https://sleepingsaint.github.io/blog/tags/string/</link><description>Recent content in string on sleepingsaint</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 07 Aug 2021 18:57:45 +0530</lastBuildDate><atom:link href="https://sleepingsaint.github.io/blog/tags/string/index.xml" rel="self" type="application/rss+xml"/><item><title>Palindrome Partitioning 2</title><link>https://sleepingsaint.github.io/blog/series/leetcode-daily/palindrome-partitioning-2/</link><pubDate>Sat, 07 Aug 2021 18:57:45 +0530</pubDate><guid>https://sleepingsaint.github.io/blog/series/leetcode-daily/palindrome-partitioning-2/</guid><description>Question Given a string s, partition s such that every substring of the partition is a palindrome.
+Return the minimum cuts needed for a palindrome partitioning of s.
+Examples Input: s = &amp;ldquo;aab&amp;rdquo;
+Output: 1
+Explanation: The palindrome partitioning [&amp;ldquo;aa&amp;rdquo;,&amp;ldquo;b&amp;rdquo;] could be produced using 1 cut.
+Input: s = &amp;ldquo;a&amp;rdquo;
+Output: 0
+Input: s = "ab" Output: 1
+Constraints 1 &amp;lt;= s.length &amp;lt;= 2000 s consists of lower-case English letters only.</description></item></channel></rss>

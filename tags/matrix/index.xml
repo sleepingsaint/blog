@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>matrix on sleepingsaint</title><link>https://sleepingsaint.github.io/blog/tags/matrix/</link><description>Recent content in matrix on sleepingsaint</description><generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 31 Jul 2021 13:00:13 +0530</lastBuildDate><atom:link href="https://sleepingsaint.github.io/blog/tags/matrix/index.xml" rel="self" type="application/rss+xml"/><item><title>01 Matrix</title><link>https://sleepingsaint.github.io/blog/series/leetcode-daily/01-matrix/</link><pubDate>Sat, 31 Jul 2021 13:00:13 +0530</pubDate><guid>https://sleepingsaint.github.io/blog/series/leetcode-daily/01-matrix/</guid><description>Question Given an m x n binary matrix mat, return the distance of the nearest 0 for each cell.
 The distance between two adjacent cells is 1.
-Examples Input: mat = [[0,0,0],[0,1,0],[0,0,0]] Output: [[0,0,0],[0,1,0],[0,0,0]]
-Input: mat = [[0,0,0],[0,1,0],[1,1,1]] Output: [[0,0,0],[0,1,0],[1,2,1]]
+Examples Input: mat = [[0,0,0],[0,1,0],[0,0,0]]
+Output: [[0,0,0],[0,1,0],[0,0,0]]
+Input: mat = [[0,0,0],[0,1,0],[1,1,1]]
+Output: [[0,0,0],[0,1,0],[1,2,1]]
 Constraints m == mat.length n == mat[i].length 1 &amp;lt;= m, n &amp;lt;= 104 1 &amp;lt;= m * n &amp;lt;= 104 mat[i][j] is either 0 or 1. There is at least one 0 in mat.</description></item></channel></rss>

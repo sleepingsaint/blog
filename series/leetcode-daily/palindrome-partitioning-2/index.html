@@ -1,0 +1,91 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Palindrome Partitioning 2</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>Given a string s, partition s such that every substring of the partition is a palindrome.</p>
+<p>Return the minimum cuts needed for a palindrome partitioning of s.</p>
+<h2 id=examples>Examples</h2>
+<p>Input: s = &ldquo;aab&rdquo;</p>
+<p>Output: 1</p>
+<p>Explanation: The palindrome partitioning [&ldquo;aa&rdquo;,&ldquo;b&rdquo;] could be produced using 1 cut.</p>
+<hr>
+<p>Input: s = &ldquo;a&rdquo;</p>
+<p>Output: 0</p>
+<hr>
+Input: s = "ab"
+<p>Output: 1</p>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>1 &lt;= s.length &lt;= 2000</li>
+<li>s consists of lower-case English letters only.</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>The approach for this problem is very much similar to <strong>parlidrome partitioning</strong> problem. Here we can use recursion to get all the palindromic substrings arrays and pick out the smallest array in the answer, which would give us the minimum cuts required to split the given string to palindromes.</p>
+<p>But using the recursion, in this problem would give us a TLE, so we use another array using to calculate the minimum cuts using <strong>dynamic programming</strong>. First we construct a dp table to check if a given substring is palindrome or not, then we use cuts array to find the minimum cuts.</p>
+<p>In cuts array we iterate over elements and check if the current substring from the 0th index is palindrome or not. If it is, then the cuts required is 0, else we iterate in the range of [0, curr index). At the iterating index let&rsquo;s say ith index, we check if substring of index range (i + 1, curr index) is palindrome or not, if it is palindrome we try to update the answer of cuts[curr index] = min(cuts[curr index], 1 + cuts[i]).</p>
+<p>Here 1 indicates the one cut and the cuts[i] indicates the number of minimum cuts required to make the substring (0, i) a palindrome.</p>
+<h2 id=code>Code</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		<span style=color:#66d9ef>int</span> minCut(string s) {
+			<span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> s.length();
+			
+			<span style=color:#75715e>// construncting is palindrome dp table
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>bool</span> isPalindrome[n][n];
+			memset(isPalindrome, false, <span style=color:#66d9ef>sizeof</span>(isPalindrome));
+			
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; i<span style=color:#f92672>++</span>) isPalindrome[i][i] <span style=color:#f92672>=</span> true;
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>; i<span style=color:#f92672>++</span>) isPalindrome[i][i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>] <span style=color:#f92672>=</span> s[i] <span style=color:#f92672>==</span> s[i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>];
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> l <span style=color:#f92672>=</span> <span style=color:#ae81ff>3</span>; l <span style=color:#f92672>&lt;=</span> n; l<span style=color:#f92672>++</span>){
+				<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n <span style=color:#f92672>-</span> l <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>; i<span style=color:#f92672>++</span>){
+					<span style=color:#66d9ef>int</span> j <span style=color:#f92672>=</span> i <span style=color:#f92672>+</span> l <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>;
+					isPalindrome[i][j] <span style=color:#f92672>=</span> s[i] <span style=color:#f92672>==</span> s[j] <span style=color:#f92672>&amp;&amp;</span> isPalindrome[i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>][j <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>];
+				}
+			}
+			
+			<span style=color:#75715e>// constructing the cuts array
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>int</span> cuts[n];
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; i<span style=color:#f92672>++</span>){
+				<span style=color:#66d9ef>if</span>(isPalindrome[<span style=color:#ae81ff>0</span>][i])
+					cuts[i] <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+				<span style=color:#66d9ef>else</span>{
+					<span style=color:#75715e>// iterating over the range of [0, curr index)
+</span><span style=color:#75715e></span>					<span style=color:#66d9ef>int</span> temp <span style=color:#f92672>=</span> i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>;
+					<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> k <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; k <span style=color:#f92672>&lt;</span> i; k<span style=color:#f92672>++</span>){
+						<span style=color:#66d9ef>if</span>(isPalindrome[k <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>][i] <span style=color:#f92672>&amp;&amp;</span> temp <span style=color:#f92672>&gt;</span> cuts[k] <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>){
+							temp <span style=color:#f92672>=</span> cuts[k] <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>;
+						}
+					}
+					cuts[i] <span style=color:#f92672>=</span> temp;
+				}
+			}
+			
+			<span style=color:#66d9ef>return</span> cuts[n <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>];
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<ul>
+<li>Space Complexity: O(N^2 + N) - for dp table and cuts table</li>
+<li>Time Complexity: O(N^2) - for dp table construction and also cuts table construction</li>
+</ul>
+</div>
+</body>
+</html>
