@@ -1,0 +1,149 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Rank Transform of Matrix</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>Given an m x n matrix, return a new matrix answer where answer[row][col] is the rank of matrix[row][col].</p>
+<p>The rank is an integer that represents how large an element is compared to other elements. It is calculated using the following rules:</p>
+<p>The rank is an integer starting from 1.</p>
+<ul>
+<li>
+<p>If two elements p and q are in the same row or column, then:</p>
+<ul>
+<li>If p &lt; q then rank(p) &lt; rank(q)</li>
+<li>If p == q then rank(p) == rank(q)</li>
+<li>If p > q then rank(p) > rank(q)</li>
+</ul>
+</li>
+<li>
+<p>The rank should be as small as possible.</p>
+</li>
+<li>
+<p>It is guaranteed that answer is unique under the given rules.</p>
+</li>
+</ul>
+<h2 id=examples>Examples</h2>
+<p>Input: matrix = [[1,2],[3,4]]</p>
+<p>Output: [[1,2],[2,3]]</p>
+<p>Explanation:</p>
+<p>The rank of matrix[0][0] is 1 because it is the smallest integer in its row and column. <br>
+The rank of matrix[0][1] is 2 because matrix[0][1] > matrix[0][0] and matrix[0][0] is rank 1. <br>
+The rank of matrix[1][0] is 2 because matrix[1][0] > matrix[0][0] and matrix[0][0] is rank 1. <br>
+The rank of matrix[1][1] is 3 because matrix[1][1] > matrix[0][1], matrix[1][1] > matrix[1][0], and both matrix[0][1] and matrix[1][0] are rank 2.</p>
+<hr>
+<p>Input: matrix = [[7,7],[7,7]]</p>
+<p>Output: [[1,1],[1,1]]</p>
+<hr>
+<p>Input: matrix = [[20,-21,14],[-19,4,19],[22,-47,24],[-19,4,19]]</p>
+<p>Output: [[4,2,3],[1,3,4],[5,1,6],[1,3,4]]</p>
+<hr>
+<p>Input: matrix = [[7,3,6],[1,4,5],[9,8,2]]</p>
+<p>Output: [[5,1,4],[1,2,3],[6,3,1]]</p>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>m == matrix.length</li>
+<li>n == matrix[i].length</li>
+<li>1 &lt;= m, n &lt;= 500</li>
+<li>-109 &lt;= matrix[row][col] &lt;= 109</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>This problem is a hard version of rank transform of a array, in which we found the rank of just one row, where as in this problem we need to find the solution for multiple rows and columns.</p>
+<p>Just like the array version we sort the numbers based on their value and assign the ranks accordingly. But we need to take care that same elements belong to same row and column must have the same rank (you could refer to example 3 to understand this), so we need to group all these elements and assign a common rank. For group these elements we use a <strong>Union Find / Disjoint Set</strong> data structure. We group the elements based on their <strong>row / column</strong> number.</p>
+<h2 id=code>Code</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		<span style=color:#66d9ef>int</span> <span style=color:#f92672>*</span>parent;
+		
+		<span style=color:#66d9ef>int</span> <span style=color:#a6e22e>find</span>(<span style=color:#66d9ef>int</span> i){
+			<span style=color:#66d9ef>if</span>(parent[i] <span style=color:#f92672>!=</span> i)
+				parent[i] <span style=color:#f92672>=</span> find(parent[i]);
+			<span style=color:#66d9ef>return</span> parent[i];
+		}
+		
+		<span style=color:#66d9ef>void</span> <span style=color:#a6e22e>merge</span>(<span style=color:#66d9ef>int</span> i, <span style=color:#66d9ef>int</span> j){
+			<span style=color:#66d9ef>int</span> par1 <span style=color:#f92672>=</span> find(i);
+			<span style=color:#66d9ef>int</span> par2 <span style=color:#f92672>=</span> find(j);
+			
+			<span style=color:#66d9ef>if</span>(par1 <span style=color:#f92672>==</span> par2) 
+				<span style=color:#66d9ef>return</span>;
+			parent[par1] <span style=color:#f92672>=</span> par2;
+		}
+		
+		vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;</span> matrixRankTransform(vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;&amp;</span> matrix) {
+			<span style=color:#75715e>// store all the positions of similar elements
+</span><span style=color:#75715e></span>			map<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span>, vector<span style=color:#f92672>&lt;</span>pair<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span>,<span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;&gt;</span> val2pos;
+			
+			<span style=color:#66d9ef>int</span> rows <span style=color:#f92672>=</span> matrix.size(), cols <span style=color:#f92672>=</span> matrix[<span style=color:#ae81ff>0</span>].size();
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> rows; i<span style=color:#f92672>++</span>){
+				<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> j <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; j <span style=color:#f92672>&lt;</span> cols; j<span style=color:#f92672>++</span>)
+					val2pos[matrix[i][j]].push_back({i, j});
+			}
+			
+			vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;</span> ans(rows, vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span>(cols, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>));
+			
+			<span style=color:#75715e>// stores the max rank for specific row and column
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>int</span> rowMaxRank[rows], colMaxRank[cols];
+			memset(rowMaxRank, <span style=color:#ae81ff>0</span>, <span style=color:#66d9ef>sizeof</span>(rowMaxRank));
+			memset(colMaxRank, <span style=color:#ae81ff>0</span>, <span style=color:#66d9ef>sizeof</span>(colMaxRank));
+			
+			<span style=color:#75715e>// iterating over the elements in sorted order
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// since we are using map, the keys are already sorted
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>auto</span> it <span style=color:#f92672>=</span> val2pos.begin(); it <span style=color:#f92672>!=</span> val2pos.end(); it<span style=color:#f92672>++</span>){
+				<span style=color:#75715e>// initialing the union find / disjoint set for this element
+</span><span style=color:#75715e></span>				parent <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#66d9ef>int</span>[rows <span style=color:#f92672>+</span> cols];
+				<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> rows <span style=color:#f92672>+</span> cols; i<span style=color:#f92672>++</span>)
+					parent[i] <span style=color:#f92672>=</span> i;
+				
+				<span style=color:#75715e>// merging the all the elements with same row / column
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>for</span>(pair<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span>, <span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> p: it<span style=color:#f92672>-&gt;</span>second){
+					merge(p.first, p.second <span style=color:#f92672>+</span> rows);
+				}
+				
+				<span style=color:#75715e>// find the common rank
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// the common rank will be the one which is largest
+</span><span style=color:#75715e></span>				map<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span>, <span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> root2rank;
+				<span style=color:#66d9ef>for</span>(pair<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span>, <span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> p: it<span style=color:#f92672>-&gt;</span>second){
+					<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> p.first, j <span style=color:#f92672>=</span> p.second;
+					<span style=color:#66d9ef>int</span> root <span style=color:#f92672>=</span> find(p.first);
+					root2rank[root] <span style=color:#f92672>=</span> max(root2rank[root], max(rowMaxRank[i], colMaxRank[j]) <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>);
+				}
+				
+				<span style=color:#75715e>// updating the ans and rowMaxRank, colMaxRank array
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>for</span>(pair<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span>, <span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> p: it<span style=color:#f92672>-&gt;</span>second){
+					<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> p.first, j <span style=color:#f92672>=</span> p.second;
+					<span style=color:#66d9ef>int</span> root <span style=color:#f92672>=</span> find(i);
+					<span style=color:#66d9ef>int</span> rank <span style=color:#f92672>=</span> root2rank[root];
+					ans[i][j] <span style=color:#f92672>=</span> rank;
+					rowMaxRank[i] <span style=color:#f92672>=</span> rank;
+					colMaxRank[j] <span style=color:#f92672>=</span> rank;
+				}
+			}
+			
+			<span style=color:#66d9ef>return</span> ans;
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<ul>
+<li>Time Complexiy: O(rows x cols x logN) - logN for inserting elements into the map</li>
+<li>Space Complexity: O(rows x cols)</li>
+</ul>
+</div>
+</body>
+</html>
