@@ -1,0 +1,111 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Add Strings</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>Given two non-negative integers, num1 and num2 represented as string, return the sum of num1 and num2 as a string.</p>
+<p>You must solve the problem without using any built-in library for handling large integers (such as BigInteger). You must also not convert the inputs to integers directly.</p>
+<h2 id=examples>Examples</h2>
+<p>Input: num1 = &ldquo;11&rdquo;, num2 = &ldquo;123&rdquo;</p>
+<p>Output: &ldquo;134&rdquo;</p>
+<hr>
+<p>Input: num1 = &ldquo;456&rdquo;, num2 = &ldquo;77&rdquo;</p>
+<p>Output: &ldquo;533&rdquo;</p>
+<hr>
+<p>Input: num1 = &ldquo;0&rdquo;, num2 = &ldquo;0&rdquo;</p>
+<p>Output: &ldquo;0&rdquo;</p>
+<hr>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>1 &lt;= num1.length, num2.length &lt;= 104</li>
+<li>num1 and num2 consist of only digits.</li>
+<li>num1 and num2 don&rsquo;t have any leading zeros except for the zero itself.</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>This problem can be solved using the approach we used to, when we are learning additions. We start from the unit digits or last digits and add them up and store the carry and then move on to next digits and so on. The catch here is, we can&rsquo;t add the characters directly so we convert them to integers and add them and convert the result to character and insert it in the answer.</p>
+<h2 id=code>Code</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		string addStrings(string num1, string num2) {
+			string str <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;&#34;</span>;
+			<span style=color:#66d9ef>int</span> n1 <span style=color:#f92672>=</span> num1.length(), n2 <span style=color:#f92672>=</span> num2.length();
+			
+			<span style=color:#75715e>// variables to maintain the current digits of 
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// each number
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> n1 <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>, j <span style=color:#f92672>=</span> n2 <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>;
+			<span style=color:#66d9ef>int</span> carry <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+			
+			<span style=color:#75715e>// iterating either till both numbers are completed
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// ie. both numbers are of same size
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// or alteast one number is completed
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>while</span>(i <span style=color:#f92672>&gt;=</span> <span style=color:#ae81ff>0</span> <span style=color:#f92672>&amp;&amp;</span> j <span style=color:#f92672>&gt;=</span> <span style=color:#ae81ff>0</span>){
+				<span style=color:#75715e>// converting the characters to integers
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>int</span> x <span style=color:#f92672>=</span> num1[i] <span style=color:#f92672>-</span> <span style=color:#e6db74>&#39;0&#39;</span>, y <span style=color:#f92672>=</span> num2[j] <span style=color:#f92672>-</span> <span style=color:#e6db74>&#39;0&#39;</span>;
+				
+				<span style=color:#75715e>// getting the new result
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>int</span> sum <span style=color:#f92672>=</span> x <span style=color:#f92672>+</span> y <span style=color:#f92672>+</span> carry;
+				carry <span style=color:#f92672>=</span> sum <span style=color:#f92672>/</span> <span style=color:#ae81ff>10</span>;
+
+				<span style=color:#75715e>// converting the integer answer to character 
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>char</span> c <span style=color:#f92672>=</span> (sum <span style=color:#f92672>%</span> <span style=color:#ae81ff>10</span>) <span style=color:#f92672>+</span> <span style=color:#e6db74>&#39;0&#39;</span>;
+				str <span style=color:#f92672>=</span> c <span style=color:#f92672>+</span> str;
+
+				<span style=color:#75715e>// moving to next digits
+</span><span style=color:#75715e></span>				i<span style=color:#f92672>--</span>;
+				j<span style=color:#f92672>--</span>;
+			}
+			
+			<span style=color:#75715e>// if the num1 have more digits than num2
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>while</span>(i <span style=color:#f92672>&gt;=</span> <span style=color:#ae81ff>0</span>){
+				<span style=color:#66d9ef>int</span> x <span style=color:#f92672>=</span> num1[i] <span style=color:#f92672>-</span> <span style=color:#e6db74>&#39;0&#39;</span>;
+				<span style=color:#66d9ef>int</span> sum <span style=color:#f92672>=</span> x <span style=color:#f92672>+</span> carry;
+				carry <span style=color:#f92672>=</span> sum <span style=color:#f92672>/</span> <span style=color:#ae81ff>10</span>;
+				<span style=color:#66d9ef>char</span> c <span style=color:#f92672>=</span> (sum <span style=color:#f92672>%</span> <span style=color:#ae81ff>10</span>) <span style=color:#f92672>+</span> <span style=color:#e6db74>&#39;0&#39;</span>;
+				str <span style=color:#f92672>=</span> c <span style=color:#f92672>+</span> str;
+				i<span style=color:#f92672>--</span>;
+			}
+			
+			<span style=color:#75715e>// if num2 have more digits than num1
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>while</span>(j <span style=color:#f92672>&gt;=</span> <span style=color:#ae81ff>0</span>){
+				<span style=color:#66d9ef>int</span> y <span style=color:#f92672>=</span> num2[j] <span style=color:#f92672>-</span> <span style=color:#e6db74>&#39;0&#39;</span>;
+				<span style=color:#66d9ef>int</span> sum <span style=color:#f92672>=</span> y <span style=color:#f92672>+</span> carry;
+				carry <span style=color:#f92672>=</span> sum <span style=color:#f92672>/</span> <span style=color:#ae81ff>10</span>;
+				<span style=color:#66d9ef>char</span> c <span style=color:#f92672>=</span> (sum <span style=color:#f92672>%</span> <span style=color:#ae81ff>10</span>) <span style=color:#f92672>+</span> <span style=color:#e6db74>&#39;0&#39;</span>;
+				str <span style=color:#f92672>=</span> c <span style=color:#f92672>+</span> str;
+				j<span style=color:#f92672>--</span>;
+			}
+			
+			<span style=color:#75715e>// if there is a carry we add it to the result
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(carry <span style=color:#f92672>!=</span> <span style=color:#ae81ff>0</span>){
+				<span style=color:#66d9ef>char</span> c <span style=color:#f92672>=</span> carry <span style=color:#f92672>+</span> <span style=color:#e6db74>&#39;0&#39;</span>;
+				str <span style=color:#f92672>=</span> c <span style=color:#f92672>+</span> str;
+			}
+			
+			<span style=color:#66d9ef>return</span> str;
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<ul>
+<li>Space Complexity: O(1) - since no variable is dependent on input size except the result which we can neglect</li>
+<li>Time Complexity: O(max(n1, n2)) - In the worst case, the max time will be due to the number with more digits</li>
+</ul>
+</div>
+</body>
+</html>
