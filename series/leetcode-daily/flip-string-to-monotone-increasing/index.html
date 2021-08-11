@@ -1,0 +1,136 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Flip String to Monotone Increasing</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>A binary string is monotone increasing if it consists of some number of 0&rsquo;s (possibly none), followed by some number of 1&rsquo;s (also possibly none).</p>
+<p>You are given a binary string s. You can flip s[i] changing it from 0 to 1 or from 1 to 0.</p>
+<p>Return the minimum number of flips to make s monotone increasing.</p>
+<h2 id=examples>Examples</h2>
+<p>Input: s = &ldquo;00110&rdquo;</p>
+<p>Output: 1</p>
+<p>Explanation: We flip the last digit to get 00111.</p>
+<hr>
+<p>Input: s = &ldquo;010110&rdquo;</p>
+<p>Output: 2</p>
+<p>Explanation: We flip to get 011111, or alternatively 000111.</p>
+<hr>
+<p>Input: s = &ldquo;00011000&rdquo;</p>
+<p>Output: 2</p>
+<p>Explanation: We flip to get 00000000.</p>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>1 &lt;= s.length &lt;= 105</li>
+<li>s[i] is either &lsquo;0&rsquo; or &lsquo;1&rsquo;.</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>So, to make a string monotone increasing, we can either all the 0&rsquo;s we found after a 1 to 1, or all the ones to 0. So this can be approached using recursion, where on every step we if we already had found 1 we flip the 0 and if we didn&rsquo;t found the 1 yet, we either flip the zero to 1 and make all the next 0&rsquo;s to 1 or if we find 1 we flip it to zero and continue the recursion. Look at the recursion code below to understand better.</p>
+<p>As you can see the time complexity is exponential, because at recursion call we making 3 more recursion calls, so the time complexity will be O(3^n).</p>
+<p>A better approach would be to think it in terms of arrays. This might be a little bit tricky to come up with but once you understand it won&rsquo;t be anymore.</p>
+<p>So the approach would be to make string monotone increasing by making zeroes in range [0, x) and next ones in range [x, n]. So to do that we need to flip the ones in left range and zeroes in the second range. We can maintain a array to get the count of ones in a certain range, so that the time complexity reduces to O(n).</p>
+<h2 id=code>Code</h2>
+<h3 id=recursion-code---o3n>Recursion Code - O(3^n)</h3>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		<span style=color:#66d9ef>int</span> minFlipsMonoIncr(string s) {
+			<span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> s.length();
+	        <span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+	        <span style=color:#66d9ef>while</span>(i <span style=color:#f92672>&lt;</span> n <span style=color:#f92672>&amp;&amp;</span> s[i] <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;0&#39;</span>)
+	            i<span style=color:#f92672>++</span>;
+			
+	        <span style=color:#66d9ef>int</span> ans <span style=color:#f92672>=</span> n;
+	        dfs(s, i, false, <span style=color:#ae81ff>0</span>, ans);
+	        <span style=color:#66d9ef>return</span> ans;
+		}
+		
+		<span style=color:#66d9ef>void</span> <span style=color:#a6e22e>dfs</span>(string s, <span style=color:#66d9ef>int</span> i, <span style=color:#66d9ef>bool</span> oneFound, <span style=color:#66d9ef>int</span> curr, <span style=color:#66d9ef>int</span> <span style=color:#f92672>&amp;</span>ans){
+			<span style=color:#75715e>// here one found indicates if we have a 1 
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// in the previous positions of the string
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// if we have all the next characters 
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// should also be 1. if not we have four more cases
+</span><span style=color:#75715e></span>
+			<span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> s.length();
+			<span style=color:#66d9ef>if</span>(i <span style=color:#f92672>==</span> n){
+				ans <span style=color:#f92672>=</span> min(ans, curr);
+				<span style=color:#66d9ef>return</span>;
+			}
+			
+			<span style=color:#66d9ef>if</span>(oneFound)
+				<span style=color:#75715e>// if we already have one in the previous positions
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// the next character should also be 1
+</span><span style=color:#75715e></span>				dfs(s, i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, oneFound, curr <span style=color:#f92672>+</span> (s[i] <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;0&#39;</span>), ans);
+			<span style=color:#66d9ef>else</span>{
+				<span style=color:#75715e>// in this case we don&#39;t have any ones prior
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>if</span>(s[i] <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;1&#39;</span>){
+					<span style=color:#75715e>// we taking 1 into count
+</span><span style=color:#75715e></span>					dfs(s, i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, true, curr, ans);
+
+					<span style=color:#75715e>// flipping the 1 back to zero
+</span><span style=color:#75715e></span>					<span style=color:#75715e>// since we don&#39;t have any ones before
+</span><span style=color:#75715e></span>					dfs(s, i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, false, curr <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, ans);
+				}<span style=color:#66d9ef>else</span>{
+					<span style=color:#75715e>// we are not flipping the 0 to 1
+</span><span style=color:#75715e></span>					dfs(s, i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, false, curr, ans);
+
+					<span style=color:#75715e>// flipping the 0 to 1
+</span><span style=color:#75715e></span>					dfs(s, i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, true, curr <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, ans);
+				}
+			}
+		}
+	};
+
+</code></pre></div><h3 id=array-based-solution>Array Based Solution</h3>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		<span style=color:#66d9ef>int</span> minFlipsMonoIncr(string s) {
+			<span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> s.length();
+			<span style=color:#66d9ef>int</span> ones[n];
+			ones[<span style=color:#ae81ff>0</span>] <span style=color:#f92672>=</span> (s[<span style=color:#ae81ff>0</span>] <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;1&#39;</span>);
+
+			<span style=color:#75715e>// building the ones array
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>; i <span style=color:#f92672>&lt;</span> n; i<span style=color:#f92672>++</span>){
+				ones[i] <span style=color:#f92672>=</span> ones[i <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>] <span style=color:#f92672>+</span> (s[i] <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;1&#39;</span> <span style=color:#f92672>?</span> <span style=color:#ae81ff>1</span> <span style=color:#f92672>:</span> <span style=color:#ae81ff>0</span>);
+			}
+			
+			<span style=color:#66d9ef>int</span> ans <span style=color:#f92672>=</span> n;
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;=</span> n; i<span style=color:#f92672>++</span>){
+				<span style=color:#75715e>// we are making [0, x) as 0&#39;s
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// and the range [x, n) as 1&#39;s
+</span><span style=color:#75715e></span>
+				<span style=color:#75715e>// calculating the ones in the [0, x) range
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>int</span> left_ones <span style=color:#f92672>=</span> (i <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span> <span style=color:#f92672>?</span> <span style=color:#ae81ff>0</span> <span style=color:#f92672>:</span> ones[i <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>]);
+
+				<span style=color:#75715e>// calculating the zeroes in the [x, n) range
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>int</span> right_zeroes <span style=color:#f92672>=</span> i <span style=color:#f92672>==</span> n <span style=color:#f92672>?</span> <span style=color:#ae81ff>0</span> <span style=color:#f92672>:</span> (n <span style=color:#f92672>-</span> i) <span style=color:#f92672>-</span> (ones[n <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>] <span style=color:#f92672>-</span> left_ones);
+				ans <span style=color:#f92672>=</span> min(ans, right_zeroes <span style=color:#f92672>+</span> left_ones);
+			}
+			
+			<span style=color:#66d9ef>return</span> ans;
+		}
+	}
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<p>For Array based solution</p>
+<ul>
+<li>Space Complexity - O(N)</li>
+<li>Time Complexity - O(N)</li>
+</ul>
+</div>
+</body>
+</html>
