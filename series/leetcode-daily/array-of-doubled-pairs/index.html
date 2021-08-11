@@ -1,0 +1,95 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Array of Doubled Pairs</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>Given an array of integers arr of even length, return true if and only if it is possible to reorder it such that arr[2 * i + 1] = 2 * arr[2 * i] for every 0 &lt;= i &lt; len(arr) / 2.</p>
+<h2 id=examples>Examples</h2>
+<p>Input: arr = [3,1,3,6]</p>
+<p>Output: false</p>
+<hr>
+<p>Input: arr = [2,1,2,6]</p>
+<p>Output: false</p>
+<hr>
+<p>Input: arr = [4,-2,2,-4]</p>
+<p>Output: true</p>
+<p>Explanation: We can take two groups, [-2,-4] and [2,4] to form [-2,-4,2,4] or [2,4,-2,-4].</p>
+<hr>
+<p>Input: arr = [1,2,4,16,8,4]</p>
+<p>Output: false</p>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>0 &lt;= arr.length &lt;= 3 * 104</li>
+<li>arr.length is even.</li>
+<li>-105 &lt;= arr[i] &lt;= 105</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>The approach would be we sort the elements first and for every element we check if there exists a counter part i.e, 2*element, if it exists we remove both elements (curr element and its counter part) from the hashmap, if it doesn&rsquo;t exists we return false.</p>
+<p>But there is one case we need to handle and that is if the current element is a negative number. The problem with negative numbers is the counter parts (2*element) comes first in the sorted array, so for the negative numbers we also need to check if there exists a counter part ie, element / 2 and element is divisible by 2 because there might be different numbers which gives same result upon division, for example both -5, -4 gives -2 on division.</p>
+<p><strong>But why sorting?</strong></p>
+<p>Consider the case [4, 2, 1, 8], if we don&rsquo;t sort for the first iteration we take (4, 2) as one pair then we cannot pair the 1, 8 so we should return false, but in reality we should return true because we can form pairs like (1, 2), (4, 8).</p>
+<p>If we sort the array then the case becomes [1, 2, 4, 8], so we can form pairs like (1, 2), (4, 8).</p>
+<p>Simply put, sorting guarentees the pairing of small number first, so that they don&rsquo;t get left behind.</p>
+<h2 id=code>Code</h2>
+<h3 id=simple-approach>Simple Approach</h3>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		<span style=color:#66d9ef>bool</span> canReorderDoubled(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> arr) {
+			<span style=color:#75715e>// sorting the elements
+</span><span style=color:#75715e></span>			sort(arr.begin(), arr.end());
+			
+			<span style=color:#75715e>// storing the elements to check for the counter parts
+</span><span style=color:#75715e></span>			unordered_map<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span>, <span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> nums;
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i: arr)
+				nums[i]<span style=color:#f92672>++</span>;
+			
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i: arr){
+				<span style=color:#75715e>// if the element is already taken
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// then skip the iteration
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>if</span>(nums[i] <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>)
+					<span style=color:#66d9ef>continue</span>;
+				
+				<span style=color:#75715e>// for positive numbers find the 2*i counter part
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>if</span>(nums.find(<span style=color:#ae81ff>2</span><span style=color:#f92672>*</span>i) <span style=color:#f92672>!=</span> nums.end() <span style=color:#f92672>&amp;&amp;</span> nums[<span style=color:#ae81ff>2</span><span style=color:#f92672>*</span>i] <span style=color:#f92672>!=</span> <span style=color:#ae81ff>0</span>){
+					nums[<span style=color:#ae81ff>2</span><span style=color:#f92672>*</span>i]<span style=color:#f92672>--</span>;
+					nums[i]<span style=color:#f92672>--</span>;   
+				}
+				<span style=color:#75715e>// for negative numbers find the i / 2 counter part
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>else</span> <span style=color:#a6e22e>if</span>(i <span style=color:#f92672>%</span> <span style=color:#ae81ff>2</span> <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span> <span style=color:#f92672>&amp;&amp;</span> nums.find(i <span style=color:#f92672>/</span> <span style=color:#ae81ff>2</span>) <span style=color:#f92672>!=</span> nums.end() <span style=color:#f92672>&amp;&amp;</span> nums[i <span style=color:#f92672>/</span> <span style=color:#ae81ff>2</span>] <span style=color:#f92672>!=</span> <span style=color:#ae81ff>0</span>){
+					nums[i<span style=color:#f92672>/</span><span style=color:#ae81ff>2</span>]<span style=color:#f92672>--</span>;
+					nums[i]<span style=color:#f92672>--</span>;
+				}
+				<span style=color:#75715e>// if we couldn&#39;t find the counter part
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// then return false because we cannot form the array
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>else</span> <span style=color:#66d9ef>return</span> false;
+			}
+			
+			<span style=color:#75715e>// if we reached this point that means we got the answer
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>return</span> true;
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<ul>
+<li>Space Complexity - O(N) - for storing all the elements in the hashmap</li>
+<li>Time Complexity O(2*N) - two for loops</li>
+</ul>
+</div>
+</body>
+</html>
