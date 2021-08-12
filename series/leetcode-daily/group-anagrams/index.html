@@ -1,0 +1,81 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Group Anagrams</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>Given an array of strings strs, group the anagrams together. You can return the answer in any order.</p>
+<p>An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once.</p>
+<h2 id=examples>Examples</h2>
+<p>Input: strs = [&ldquo;eat&rdquo;,&ldquo;tea&rdquo;,&ldquo;tan&rdquo;,&ldquo;ate&rdquo;,&ldquo;nat&rdquo;,&ldquo;bat&rdquo;]</p>
+<p>Output: [[&ldquo;bat&rdquo;],[&ldquo;nat&rdquo;,&ldquo;tan&rdquo;],[&ldquo;ate&rdquo;,&ldquo;eat&rdquo;,&ldquo;tea&rdquo;]]</p>
+<hr>
+<p>Input: strs = [""]</p>
+<p>Output: [[""]]</p>
+<hr>
+<p>Input: strs = [&ldquo;a&rdquo;]</p>
+<p>Output: [[&ldquo;a&rdquo;]]</p>
+<hr>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>1 &lt;= strs.length &lt;= 104</li>
+<li>0 &lt;= strs[i].length &lt;= 100</li>
+<li>strs[i] consists of lower-case English letters.</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>As mentioned in the question we need to group all the strings which are anagrams. But how to know if two strings are anagrams, we can use nested for loop to check how many other anagram strings exists. But if we think a bit more we can see that by sorting all the strings which are anagrams looks same.</p>
+<p>Example:</p>
+<ul>
+<li>Before sorting [&ldquo;eat&rdquo;, &ldquo;tea&rdquo;, &ldquo;ate&rdquo;]</li>
+<li>After sorting [&ldquo;aet&rdquo;, &ldquo;aet&rdquo;, &ldquo;aet&rdquo;]</li>
+</ul>
+<p>So, for every given string we sort the string (in more compact way, we sort the characters of the string) and store the string with key as sorted string and value as original string. For storing we can <strong>hashmap</strong>. But there might be more than one string with same anagram, so as in the value field of hashmap we store array of strings, instead of single string, to store all the anagram strings.</p>
+<h2 id=code>Code</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span>string<span style=color:#f92672>&gt;&gt;</span> groupAnagrams(vector<span style=color:#f92672>&lt;</span>string<span style=color:#f92672>&gt;&amp;</span> strs) {
+			<span style=color:#75715e>// hashmap to store all the anagrams
+</span><span style=color:#75715e></span>			map<span style=color:#f92672>&lt;</span>string, vector<span style=color:#f92672>&lt;</span>string<span style=color:#f92672>&gt;&gt;</span> m;
+
+			<span style=color:#66d9ef>for</span>(string str: strs){
+				
+				<span style=color:#75715e>// sorting the string to 
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// get the key of all the related anagram
+</span><span style=color:#75715e></span>				string tmp <span style=color:#f92672>=</span> str;
+				sort(tmp.begin(), tmp.end());
+
+				<span style=color:#75715e>// adding the string to the corresponding anagrams group
+</span><span style=color:#75715e></span>				m[tmp].push_back(str);
+			}
+
+			<span style=color:#75715e>// storing all the anagram groups in the answer
+</span><span style=color:#75715e></span>			vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span>string<span style=color:#f92672>&gt;&gt;</span> vec;
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>auto</span> it <span style=color:#f92672>=</span> m.begin(); it <span style=color:#f92672>!=</span> m.end(); it<span style=color:#f92672>++</span>)
+				vec.push_back(it<span style=color:#f92672>-&gt;</span>second);
+			<span style=color:#66d9ef>return</span> vec;
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<ul>
+<li>Space Complexity: O(N) - to store the N strings in the hashmap</li>
+<li>Time Complexity: O(N*nlog(n)) - For every string we are sorting string. sorting takes nlogn time where n is max length of the given strings</li>
+</ul>
+</div>
+</body>
+</html>
