@@ -2,7 +2,7 @@
 title: "Set Matrix Zeroes"
 date: 2021-08-13T13:36:46+05:30
 draft: false 
-tags: ["array"]
+tags: ["array", "matrix"]
 series: "leetcode-daily" 
 ---
 
