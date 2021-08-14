@@ -1,0 +1,104 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Remove Boxes</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>You are given several boxes with different colors represented by different positive numbers.</p>
+<p>You may experience several rounds to remove boxes until there is no box left. Each time you can choose some continuous boxes with the same color (i.e., composed of k boxes, k >= 1), remove them and get k * k points.</p>
+<p>Return the maximum points you can get.</p>
+<h2 id=examples>Examples</h2>
+<p>Input: boxes = [1,3,2,2,2,3,4,3,1]</p>
+<p>Output: 23</p>
+<p>Explanation:</p>
+<p>[1, 3, 2, 2, 2, 3, 4, 3, 1] <br>
+&mdash;-> [1, 3, 3, 4, 3, 1] (3x3=9 points)<br>
+&mdash;-> [1, 3, 3, 3, 1] (1x1=1 points)<br>
+&mdash;-> [1, 1] (3x3=9 points)<br>
+&mdash;-> [ ] (2x2=4 points)</p>
+<hr>
+<p>Input: boxes = [1,1,1]</p>
+<p>Output: 9</p>
+<hr>
+<p>Input: boxes = [1]</p>
+<p>Output: 1</p>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>1 &lt;= boxes.length &lt;= 100</li>
+<li>1 &lt;= boxes[i] &lt;= 100</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>I must confess that this is one of the hard problems which is difficult to come up with a solution (atleast for me) unless you did lot of hard work.</p>
+<p>As explained in the question, we take the continuous array of same color and add the 2 power of the length of the array and add it to the answer, now the question is, which continuous array should be picked. Here if we pick the array with largest length we might not get the maximum answer, in simple terms <strong>greedy</strong> approach doesn&rsquo;t work, for example in example 1, from step 1 to step2 we removed [4] not [3, 3, 3] to get the maximum answer.</p>
+<p>We might try with the recursion approach where we remove some continous array and continue the recursion and when we finally reach a state where the array is empty, we update the answer if answer is less than the current recursion answer. The problem with this approach is the number of states is very large, because we are generating (length of array) ^ (length of array).</p>
+<p>N - length of array</p>
+<ul>
+<li>1st recursion call - N recursion calls</li>
+<li>2nd recursion call - N - 1 recursion calls</li>
+</ul>
+<p>and so on. So total states would be (N x N - 1 x N - 2 x N - 3 x &mldr;. x 1). There might be some duplicate states but even after handling the duplicate states by using <strong>memoization</strong>, the number of states would be large.</p>
+<p>The time complexity would be <strong>total states x time to compute each state</strong>.</p>
+<p>So now we need to try to decrease the number of states. We use <strong>dynamic programming</strong>, we split the bigger problem into smaller sub problems. So the bigger problem is solve in the range of [0, boxes.length - 1] range. For some sub problem say in the range [i, j], to solve this we need to know if i is part of any continuous array, for that we use another variable k, which indicates the number of same colored boxes to the left of index i.</p>
+<p>Now if the i is part of any cont. array we can take it into account or we don&rsquo;t take it into account, since it is not required to take the entire continuous array. If it is not part of any array, we just take that single element and solve the remaining range [i + 1, j] normally. Now, there is another case we can try, in the range of [i, j], we iterate and if any element is of same color as the box at ith index we try removing the in between boxes and check if it can improve the answer or not.</p>
+<p>The above explanation can be better understood from going through the code.</p>
+<h2 id=code>Code</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		<span style=color:#75715e>// this dp matrix is used for memoization
+</span><span style=color:#75715e></span>		<span style=color:#75715e>// it eleminates the processing of same states again
+</span><span style=color:#75715e></span>		<span style=color:#66d9ef>int</span> dp[<span style=color:#ae81ff>100</span>][<span style=color:#ae81ff>100</span>][<span style=color:#ae81ff>100</span>];
+		
+		<span style=color:#66d9ef>int</span> <span style=color:#a6e22e>removeBoxes</span>(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> boxes) {
+			memset(dp, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>, <span style=color:#66d9ef>sizeof</span>(dp));
+			<span style=color:#66d9ef>return</span> util(boxes, <span style=color:#ae81ff>0</span>, boxes.size() <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>0</span>);
+		}
+		
+		<span style=color:#66d9ef>int</span> <span style=color:#a6e22e>util</span>(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> <span style=color:#f92672>&amp;</span>boxes, <span style=color:#66d9ef>int</span> i, <span style=color:#66d9ef>int</span> j, <span style=color:#66d9ef>int</span> k){
+			<span style=color:#66d9ef>if</span>(i <span style=color:#f92672>&gt;</span> j) <span style=color:#66d9ef>return</span> <span style=color:#ae81ff>0</span>;
+			<span style=color:#66d9ef>if</span>(dp[i][j][k] <span style=color:#f92672>!=</span> <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>) <span style=color:#66d9ef>return</span> dp[i][j][k];
+			
+			<span style=color:#75715e>// initially finding the answer by taking 
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// current box and previous k same colored boxes 
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// and solving the remaining range
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>int</span> res <span style=color:#f92672>=</span> (k <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>)<span style=color:#f92672>*</span>(k <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>) <span style=color:#f92672>+</span> util(boxes, i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, j, <span style=color:#ae81ff>0</span>);
+			
+
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> it <span style=color:#f92672>=</span> i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>; it <span style=color:#f92672>&lt;=</span> j; it<span style=color:#f92672>++</span>){
+				<span style=color:#75715e>// if we find the same colored box as the box at ith index
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// we remove the boxes in between the boxes ie in range [i + 1, it - 1] 
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// and solve the new range
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>if</span>(boxes[it] <span style=color:#f92672>==</span> boxes[i]){
+					<span style=color:#66d9ef>int</span> count <span style=color:#f92672>=</span> it <span style=color:#f92672>-</span> i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>;
+					res <span style=color:#f92672>=</span> max(res, util(boxes, i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, it <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>0</span>) <span style=color:#f92672>+</span> util(boxes, it, j, k <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>));
+				}
+			}
+			
+			<span style=color:#66d9ef>return</span> dp[i][j][k] <span style=color:#f92672>=</span> res;
+			
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<ul>
+<li>Space Complexity - O(1) - constant because irrespective of input length the space is 100x100x100</li>
+<li>Time Complexity - O(100x100x100) - In worst case we do N^3 recursions</li>
+</ul>
+<p>** Any updates to the complexity or problem solution is appreciated</p>
+</div>
+</body>
+</html>
