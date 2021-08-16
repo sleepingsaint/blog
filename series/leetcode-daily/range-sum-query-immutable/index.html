@@ -1,0 +1,209 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Range Sum Query Immutable</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>Given an integer array nums, handle multiple queries of the following type:</p>
+<p>Calculate the sum of the elements of nums between indices left and right inclusive where left &lt;= right.</p>
+<p>Implement the NumArray class:</p>
+<ul>
+<li>NumArray(int[] nums) Initializes the object with the integer array nums.</li>
+<li>int sumRange(int left, int right) Returns the sum of the elements of nums between indices left and right inclusive (i.e. nums[left] + nums[left + 1] + &mldr; + nums[right]).</li>
+</ul>
+<h2 id=examples>Examples</h2>
+<p>Input</p>
+<p>[&ldquo;NumArray&rdquo;, &ldquo;sumRange&rdquo;, &ldquo;sumRange&rdquo;, &ldquo;sumRange&rdquo;]</p>
+<p>[[[-2, 0, 3, -5, 2, -1]], [0, 2], [2, 5], [0, 5]]</p>
+<p>Output</p>
+<p>[null, 1, -1, -3]</p>
+<div>
+Explanation
+<p>NumArray numArray = new NumArray([-2, 0, 3, -5, 2, -1]);<br>
+numArray.sumRange(0, 2); // return (-2) + 0 + 3 = 1<br>
+numArray.sumRange(2, 5); // return 3 + (-5) + 2 + (-1) = -1 <br>
+numArray.sumRange(0, 5); // return (-2) + 0 + 3 + (-5) + 2 + (-1) = -3</p>
+<hr>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>1 &lt;= nums.length &lt;= 104</li>
+<li>-105 &lt;= nums[i] &lt;= 105</li>
+<li>0 &lt;= left &lt;= right &lt; nums.length</li>
+<li>At most 104 calls will be made to sumRange.</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>I will explain three solutions here:</p>
+<ol>
+<li>naive approach</li>
+<li>Prefix Sums</li>
+<li>Segment Tree</li>
+</ol>
+<ul>
+<li>Naive Approach</li>
+</ul>
+<p>So the naive approach would be calculate the sum every time we are performing a query. This approach will run fine given the current constraints, but with larger constraints we might encounter TLE.</p>
+<ul>
+<li>Prefix Sums</li>
+</ul>
+<p>In this approach we precalculate the sums untill every index and when we need to do a query of range [i, j] we just return (sums till jth index - sums till (i - 1)th index). This is very intuitive and easy to understand. Problem with this approach is if the nums[i] is very large we might encounter overflow problems. In the question its mentioned <strong>immutable</strong> so we need to maintain a extra array to store the result.</p>
+<ul>
+<li>Segment Tree</li>
+</ul>
+<p>As the name suggests we divide the problem into smaller segments in this question we divide it into smaller ranges. The following image will give you the idea how we are going to solve this problem. As shown in the image we build the tree for multiple ranges and try to answer the given ranges by splitting them.</p>
+<div style=display:flex;justify-content:center>
+<p><img src=https://he-s3.s3.amazonaws.com/media/uploads/eec15d3.jpg alt=image></p>
+</div>
+<p>For example, if we need to find the answer for range (2, 5), we can see that there is no (2, 5) range in the tree, so what we do is we split range to (2, 2) and (3, 5) which we have in the tree. We keep splitting the range untill we have a range in the tree.</p>
+<p>Why segment tree?</p>
+<p>Segment tree might seem complex to implement when compared to prefix sums, but learning how to implement this datastructure can help in other problems which involve functions other than summation, for example if this problems involves updation, in the prefix sum approach we need to update all the indexes after the current updated index which would be (in worst case) O(N), whereas in segment tree we need to do only log(N) updations.</p>
+<h2 id=code>Code</h2>
+<h3 id=naive-approach>Naive approach</h3>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>NumArray</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> nums;
+		NumArray(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> nums) {
+			<span style=color:#66d9ef>this</span><span style=color:#f92672>-&gt;</span>nums <span style=color:#f92672>=</span> nums;
+		}
+		
+		<span style=color:#66d9ef>int</span> <span style=color:#a6e22e>sumRange</span>(<span style=color:#66d9ef>int</span> left, <span style=color:#66d9ef>int</span> right) {
+			<span style=color:#66d9ef>if</span>(left <span style=color:#f92672>==</span> right)
+				<span style=color:#66d9ef>return</span> nums[left];
+			
+			<span style=color:#75715e>// iterating over the range and finding the sum
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>int</span> count <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> left; i <span style=color:#f92672>&lt;=</span> right; i<span style=color:#f92672>++</span>)
+				count <span style=color:#f92672>+=</span> nums[i];
+			<span style=color:#66d9ef>return</span> count;
+		}
+	};
+
+</code></pre></div><h3 id=prefix-sums>Prefix Sums</h3>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>NumArray</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> nums;
+		NumArray(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> nums) {
+			<span style=color:#66d9ef>this</span><span style=color:#f92672>-&gt;</span>nums <span style=color:#f92672>=</span> nums;
+
+			<span style=color:#75715e>// computing the prefix sum array
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>; i <span style=color:#f92672>&lt;</span> nums.size(); i<span style=color:#f92672>++</span>)
+				<span style=color:#66d9ef>this</span><span style=color:#f92672>-&gt;</span>nums[i] <span style=color:#f92672>+=</span> <span style=color:#66d9ef>this</span><span style=color:#f92672>-&gt;</span>nums[i <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>];
+		}
+		
+		<span style=color:#66d9ef>int</span> <span style=color:#a6e22e>sumRange</span>(<span style=color:#66d9ef>int</span> left, <span style=color:#66d9ef>int</span> right) {
+			<span style=color:#75715e>// if left is 0 that means range is untill right index
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(left <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>) <span style=color:#66d9ef>return</span> nums[right];
+			<span style=color:#66d9ef>return</span> nums[right] <span style=color:#f92672>-</span> nums[left <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>];
+		}
+	};
+
+</code></pre></div><h3 id=segment-tree>Segment Tree</h3>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#75715e>// defining the segment tree node
+</span><span style=color:#75715e></span>	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Tree</span>{
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		<span style=color:#75715e>// variables to store the value of the range
+</span><span style=color:#75715e></span>		<span style=color:#75715e>// and left and right limits of the range
+</span><span style=color:#75715e></span>		<span style=color:#66d9ef>int</span> value, l, r;
+
+		<span style=color:#75715e>// variables to store the left and right children of the current node
+</span><span style=color:#75715e></span>		Tree <span style=color:#f92672>*</span>left, <span style=color:#f92672>*</span>right;
+		
+		Tree(<span style=color:#66d9ef>int</span> value, <span style=color:#66d9ef>int</span> l, <span style=color:#66d9ef>int</span> r, Tree<span style=color:#f92672>*</span> left, Tree<span style=color:#f92672>*</span> right){
+			<span style=color:#66d9ef>this</span><span style=color:#f92672>-&gt;</span>value <span style=color:#f92672>=</span> value;
+			<span style=color:#66d9ef>this</span><span style=color:#f92672>-&gt;</span>l <span style=color:#f92672>=</span> l;
+			<span style=color:#66d9ef>this</span><span style=color:#f92672>-&gt;</span>r <span style=color:#f92672>=</span> r;
+			<span style=color:#66d9ef>this</span><span style=color:#f92672>-&gt;</span>left <span style=color:#f92672>=</span> left;
+			<span style=color:#66d9ef>this</span><span style=color:#f92672>-&gt;</span>right <span style=color:#f92672>=</span> right;
+		}
+	};
+
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>NumArray</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		Tree<span style=color:#f92672>*</span> root;
+		
+		<span style=color:#75715e>// building the segment tree
+</span><span style=color:#75715e></span>		Tree<span style=color:#f92672>*</span> <span style=color:#a6e22e>buildSegmentTree</span>(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> <span style=color:#f92672>&amp;</span>nums, <span style=color:#66d9ef>int</span> l, <span style=color:#66d9ef>int</span> r){
+			<span style=color:#75715e>// return NULL for invalid range
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(l <span style=color:#f92672>&gt;</span> r) <span style=color:#66d9ef>return</span> NULL;
+			
+			<span style=color:#75715e>// if l == r that means we are looking at single 
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// element or in terms of tree languages, we are looking at a leaf node
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(l <span style=color:#f92672>==</span> r){
+				Tree<span style=color:#f92672>*</span> node <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Tree(nums[l], l, l, NULL, NULL);
+				<span style=color:#66d9ef>return</span> node;
+			}
+			
+
+			<span style=color:#66d9ef>int</span> mid <span style=color:#f92672>=</span> l <span style=color:#f92672>+</span> (r <span style=color:#f92672>-</span> l) <span style=color:#f92672>/</span> <span style=color:#ae81ff>2</span>;
+			<span style=color:#75715e>// computing the left and right subtrees first
+</span><span style=color:#75715e></span>			Tree<span style=color:#f92672>*</span> left <span style=color:#f92672>=</span> buildSegmentTree(nums, l, mid);
+			Tree<span style=color:#f92672>*</span> right <span style=color:#f92672>=</span> buildSegmentTree(nums, mid <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, r);
+			
+			<span style=color:#75715e>// building the current node with left and right subtrees
+</span><span style=color:#75715e></span>			Tree<span style=color:#f92672>*</span> node <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Tree(left<span style=color:#f92672>-&gt;</span>value <span style=color:#f92672>+</span> right<span style=color:#f92672>-&gt;</span>value, l, r, left, right);
+			<span style=color:#66d9ef>return</span> node;
+		}
+		
+		NumArray(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> nums) {
+			root <span style=color:#f92672>=</span> buildSegmentTree(nums, <span style=color:#ae81ff>0</span>, nums.size() <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>);
+		}
+		
+		<span style=color:#75715e>// get the value given the range
+</span><span style=color:#75715e></span>		<span style=color:#66d9ef>int</span> <span style=color:#a6e22e>getValue</span>(Tree<span style=color:#f92672>*</span> root, <span style=color:#66d9ef>int</span> l, <span style=color:#66d9ef>int</span> r){
+			<span style=color:#66d9ef>if</span>(root<span style=color:#f92672>-&gt;</span>l <span style=color:#f92672>==</span> l <span style=color:#f92672>&amp;&amp;</span> root<span style=color:#f92672>-&gt;</span>r <span style=color:#f92672>==</span> r) <span style=color:#66d9ef>return</span> root<span style=color:#f92672>-&gt;</span>value;
+			<span style=color:#66d9ef>int</span> mid <span style=color:#f92672>=</span> root<span style=color:#f92672>-&gt;</span>l <span style=color:#f92672>+</span> (root<span style=color:#f92672>-&gt;</span>r <span style=color:#f92672>-</span> root<span style=color:#f92672>-&gt;</span>l) <span style=color:#f92672>/</span> <span style=color:#ae81ff>2</span>;
+			
+			<span style=color:#75715e>// if the range is completely inside the left child
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(r <span style=color:#f92672>&lt;=</span> mid) <span style=color:#66d9ef>return</span> getValue(root<span style=color:#f92672>-&gt;</span>left, l, r);
+
+			<span style=color:#75715e>// if the range is completely inside the right child
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(l <span style=color:#f92672>&gt;</span> mid) <span style=color:#66d9ef>return</span> getValue(root<span style=color:#f92672>-&gt;</span>right, l, r);
+			
+			<span style=color:#75715e>// return value from the left and right child
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>return</span> getValue(root<span style=color:#f92672>-&gt;</span>left, l, mid) <span style=color:#f92672>+</span> getValue(root<span style=color:#f92672>-&gt;</span>right, mid <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, r);
+		}
+		
+		<span style=color:#66d9ef>int</span> <span style=color:#a6e22e>sumRange</span>(<span style=color:#66d9ef>int</span> left, <span style=color:#66d9ef>int</span> right) {
+			<span style=color:#66d9ef>return</span> getValue(root, left, right);
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<ul>
+<li>Q - be number of queries</li>
+<li>N - size of nums array</li>
+</ul>
+<p>Naive Approach:</p>
+<ul>
+<li>Space Complexity: O(N)</li>
+<li>Time Complexity: O(NxQ) - every time we iterating over the given range</li>
+</ul>
+<p>Prefix Sum:</p>
+<ul>
+<li>Space Complexity: O(N) - for storing the nums array</li>
+<li>Time Complexity: O(N + Q) - for building the prefix sum array and O(1) for every query so for Q queries O(Q)</li>
+</ul>
+<p>Segment Tree:</p>
+<ul>
+<li>Space Complexity: O(2xN - 1)</li>
+<li>Time Complexity: O(logN) - in the worst case we go to the depth of the tree which is logn</li>
+</ul>
+</div>
+</body>
+</html>
