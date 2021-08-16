@@ -2,7 +2,7 @@
 title: "Remove Boxes"
 date: 2021-08-14T22:30:00+05:30
 draft: false 
-tags: ["dynammic programming", "memoization", "array"]
+tags: ["dynamic programming", "memoization", "array"]
 series: "leetcode-daily" 
 ---
 
