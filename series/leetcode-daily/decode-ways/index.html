@@ -1,0 +1,147 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Decode Ways</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>A message containing letters from A-Z can be encoded into numbers using the following mapping:</p>
+<p>&lsquo;A&rsquo; -> &ldquo;1&rdquo;
+&lsquo;B&rsquo; -> &ldquo;2&rdquo;
+&mldr;
+&lsquo;Z&rsquo; -> &ldquo;26&rdquo;</p>
+<p>To decode an encoded message, all the digits must be grouped then mapped back into letters using the reverse of the mapping above (there may be multiple ways). For example, &ldquo;11106&rdquo; can be mapped into:</p>
+<ul>
+<li>&ldquo;AAJF&rdquo; with the grouping (1 1 10 6)</li>
+<li>&ldquo;KJF&rdquo; with the grouping (11 10 6)</li>
+</ul>
+<p>Note that the grouping (1 11 06) is invalid because &ldquo;06&rdquo; cannot be mapped into &lsquo;F&rsquo; since &ldquo;6&rdquo; is different from &ldquo;06&rdquo;.</p>
+<p>Given a string s containing only digits, return the number of ways to decode it.</p>
+<p>The answer is guaranteed to fit in a 32-bit integer.</p>
+<h2 id=examples>Examples</h2>
+<p>Input: s = &ldquo;12&rdquo; <br>
+Output: 2 <br>
+Explanation: &ldquo;12&rdquo; could be decoded as &ldquo;AB&rdquo; (1 2) or &ldquo;L&rdquo; (12).</p>
+<hr>
+<p>Input: s = &ldquo;226&rdquo; <br>
+Output: 3 <br>
+Explanation: &ldquo;226&rdquo; could be decoded as &ldquo;BZ&rdquo; (2 26), &ldquo;VF&rdquo; (22 6), or &ldquo;BBF&rdquo; (2 2 6).</p>
+<hr>
+<p>Input: s = &ldquo;0&rdquo; <br>
+Output: 0 <br>
+Explanation: There is no character that is mapped to a number starting with 0.
+The only valid mappings with 0 are &lsquo;J&rsquo; -> &ldquo;10&rdquo; and &lsquo;T&rsquo; -> &ldquo;20&rdquo;, neither of which start with 0.
+Hence, there are no valid ways to decode this since all digits need to be mapped.</p>
+<hr>
+<p>Input: s = &ldquo;06&rdquo; <br>
+Output: 0 <br>
+Explanation: &ldquo;06&rdquo; cannot be mapped to &ldquo;F&rdquo; because of the leading zero (&ldquo;6&rdquo; is different from &ldquo;06&rdquo;).</p>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>1 &lt;= s.length &lt;= 100</li>
+<li>s contains only digits and may contain leading zero(s).</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>For this problem we the first idea we get is to use <strong>recursion</strong>. We map first or first two characters to some characters and try to map the remaining string to something else. This will work fine for smaller input&rsquo;s but given the constraints we still might encounter TLE.</p>
+<p>So another approach would be solve the problem from the bottom instead of the top using <strong>dynamic programming</strong>. Before we mapped first characters and checked the number of strings in the remaining strings, now we first map the remaining string and then try to map the first characters, this way the code runs in O(N).</p>
+<h2 id=code>Code</h2>
+<h3 id=recursion>Recursion</h3>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		<span style=color:#66d9ef>int</span> numDecodings(string s) {
+			<span style=color:#75715e>// variable to store all the unique strings
+</span><span style=color:#75715e></span>			set<span style=color:#f92672>&lt;</span>string<span style=color:#f92672>&gt;</span> ways;
+			
+			<span style=color:#75715e>// recursively calling to make mappings 
+</span><span style=color:#75715e></span>			dfs(s, ways, <span style=color:#ae81ff>0</span>, <span style=color:#e6db74>&#34;&#34;</span>);
+			<span style=color:#66d9ef>return</span> ways.size();
+		}
+		
+		<span style=color:#66d9ef>void</span> <span style=color:#a6e22e>dfs</span>(string <span style=color:#f92672>&amp;</span>s, set<span style=color:#f92672>&lt;</span>string<span style=color:#f92672>&gt;</span> <span style=color:#f92672>&amp;</span>ways, <span style=color:#66d9ef>int</span> i, string curr){
+			<span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> s.length();
+			<span style=color:#66d9ef>if</span>(i <span style=color:#f92672>==</span> n) {
+				<span style=color:#75715e>// if we reached the end we add the current 
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// mapped string to the set
+</span><span style=color:#75715e></span>				ways.insert(curr);
+				<span style=color:#66d9ef>return</span>;
+			}
+			
+			<span style=color:#75715e>// if the current starting character is
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// 0 we cannot map as mentioned in question
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(s[i] <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;0&#39;</span>)
+				<span style=color:#66d9ef>return</span>;
+
+			<span style=color:#75715e>// we map the first character and then remaining string
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>int</span> num <span style=color:#f92672>=</span> stoi(s.substr(i, <span style=color:#ae81ff>1</span>)) <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>;
+			dfs(s, ways, i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, curr <span style=color:#f92672>+</span> <span style=color:#66d9ef>char</span>(<span style=color:#ae81ff>65</span> <span style=color:#f92672>+</span> num));
+			
+			<span style=color:#75715e>// we map the first 2 characters and then remaining string
+</span><span style=color:#75715e></span>			num <span style=color:#f92672>=</span> stoi(s.substr(i, <span style=color:#ae81ff>2</span>)) <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>;
+			<span style=color:#66d9ef>if</span>(i <span style=color:#f92672>!=</span> n <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span> <span style=color:#f92672>&amp;&amp;</span> num <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>26</span>){
+				dfs(s, ways, i <span style=color:#f92672>+</span> <span style=color:#ae81ff>2</span>, curr <span style=color:#f92672>+</span> <span style=color:#66d9ef>char</span>(<span style=color:#ae81ff>65</span> <span style=color:#f92672>+</span> num));
+			}
+		}
+	};
+
+</code></pre></div><h3 id=dynamic-programming>dynamic programming</h3>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		<span style=color:#66d9ef>int</span> numDecodings(string s) {
+			<span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> s.length();
+
+			<span style=color:#66d9ef>int</span> dp[n];
+			
+			dp[n <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>] <span style=color:#f92672>=</span> s[n <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>] <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;0&#39;</span> <span style=color:#f92672>?</span> <span style=color:#ae81ff>0</span> <span style=color:#f92672>:</span> <span style=color:#ae81ff>1</span>;
+			
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> n <span style=color:#f92672>-</span> <span style=color:#ae81ff>2</span>; i <span style=color:#f92672>&gt;=</span> <span style=color:#ae81ff>0</span>; i<span style=color:#f92672>--</span>){
+				<span style=color:#75715e>// this loops calculates the number of 
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// decodings if string[i:n-1] th indexes are given
+</span><span style=color:#75715e></span>
+				dp[i] <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+				
+				<span style=color:#66d9ef>int</span> num1 <span style=color:#f92672>=</span> stoi(s.substr(i, <span style=color:#ae81ff>1</span>));
+				<span style=color:#75715e>// if current number is 0 we skip
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>if</span>(num1 <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>)
+					<span style=color:#66d9ef>continue</span>;
+				
+				<span style=color:#75715e>// mapping single character
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// this statement also checks if the index is n - 1
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// then the answer for the dp[i] will be 1
+</span><span style=color:#75715e></span>				dp[i] <span style=color:#f92672>+=</span> i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span> <span style=color:#f92672>&lt;</span> n <span style=color:#f92672>?</span> dp[i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>] <span style=color:#f92672>:</span> <span style=color:#ae81ff>1</span>;
+				
+				<span style=color:#75715e>// mapping 2 characters
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>int</span> num2 <span style=color:#f92672>=</span> stoi(s.substr(i, <span style=color:#ae81ff>2</span>));
+				<span style=color:#66d9ef>if</span>(num2 <span style=color:#f92672>&lt;=</span> <span style=color:#ae81ff>26</span>)
+					<span style=color:#75715e>// this statement also checks if the index is n - 2
+</span><span style=color:#75715e></span>					<span style=color:#75715e>// then the answer for the dp[i] will be 2 since we can map
+</span><span style=color:#75715e></span>					dp[i] <span style=color:#f92672>+=</span> i <span style=color:#f92672>+</span> <span style=color:#ae81ff>2</span> <span style=color:#f92672>&lt;</span> n <span style=color:#f92672>?</span> dp[i <span style=color:#f92672>+</span> <span style=color:#ae81ff>2</span>] <span style=color:#f92672>:</span> <span style=color:#ae81ff>1</span>;
+			}
+
+			<span style=color:#66d9ef>return</span> dp[<span style=color:#ae81ff>0</span>];
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<p>N - length of the given string</p>
+<ul>
+<li>Space Complexity: O(N) - for storing the dp table</li>
+<li>Time Complexity: O(N) - we are iterating every character only once</li>
+</ul>
+</div>
+</body>
+</html>
