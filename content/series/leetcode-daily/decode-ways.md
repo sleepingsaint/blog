@@ -2,7 +2,7 @@
 title: "Decode Ways"
 date: 2021-08-18T16:33:01+05:30
 draft: false 
-tags: ["string", "recursion"]
+tags: ["string", "recursion", "dynamic programming"]
 series: "leetcode-daily" 
 ---
 
