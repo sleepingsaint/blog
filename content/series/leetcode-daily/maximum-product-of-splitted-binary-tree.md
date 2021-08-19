@@ -16,11 +16,18 @@ Note that you need to maximize the answer before taking the mod and not after ta
 
 ## Examples
 
+<div style="display: flex; justify-content: center">
+	<img style="margin: 0 auto;" src="./example1.png">
+</div>
+
 Input: root = [1,2,3,4,5,6] <br/>
 Output: 110 <br/>
 Explanation: Remove the red edge and get 2 binary trees with sum 11 and 10. Their product is 110 (11*10)
 <hr />
 
+<div style="display: flex; justify-content: center">
+	<img style="margin: 0 auto;" src="./example2.png">
+</div>
 Input: root = [1,null,2,3,4,null,null,5,6] <br />
 Output: 90 <br />
 Explanation: Remove the red edge and get 2 binary trees with sum 15 and 6.Their product is 90 (15*6)
