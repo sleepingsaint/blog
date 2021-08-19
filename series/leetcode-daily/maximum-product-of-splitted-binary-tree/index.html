@@ -61,11 +61,11 @@ Output: 1</p>
 			<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span>root) <span style=color:#66d9ef>return</span> <span style=color:#ae81ff>0</span>;
 			ll total <span style=color:#f92672>=</span> (ll) getSum(root);
 			
-			<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>dfs</span>(root, total) <span style=color:#f92672>%</span> mod;
+			<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>solve</span>(root, total) <span style=color:#f92672>%</span> mod;
 		}
 		
 		<span style=color:#75715e>// recursively computing the answer
-</span><span style=color:#75715e></span>		<span style=color:#66d9ef>long</span> <span style=color:#66d9ef>long</span> <span style=color:#a6e22e>dfs</span>(TreeNode<span style=color:#f92672>*</span> root, <span style=color:#66d9ef>long</span> <span style=color:#66d9ef>long</span> total){
+</span><span style=color:#75715e></span>		<span style=color:#66d9ef>long</span> <span style=color:#66d9ef>long</span> <span style=color:#a6e22e>solve</span>(TreeNode<span style=color:#f92672>*</span> root, <span style=color:#66d9ef>long</span> <span style=color:#66d9ef>long</span> total){
 			<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span>root) <span style=color:#66d9ef>return</span> <span style=color:#ae81ff>0</span>;
 			
 			ll ans <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>, rsum <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>, lsum <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
@@ -78,7 +78,7 @@ Output: 1</p>
 				ans <span style=color:#f92672>=</span> max(ans, left <span style=color:#f92672>*</span> rsum);
 
 				<span style=color:#75715e>// recursively calling in the left subtree
-</span><span style=color:#75715e></span>				ans <span style=color:#f92672>=</span> max(ans, dfs(root<span style=color:#f92672>-&gt;</span>left, total));
+</span><span style=color:#75715e></span>				ans <span style=color:#f92672>=</span> max(ans, solve(root<span style=color:#f92672>-&gt;</span>left, total));
 			}
 			
 			<span style=color:#75715e>// if we can split in the right subtree
@@ -89,7 +89,7 @@ Output: 1</p>
 				ans <span style=color:#f92672>=</span> max(ans, right <span style=color:#f92672>*</span> lsum);
 				
 				<span style=color:#75715e>// recursively calling the right subtree
-</span><span style=color:#75715e></span>				ans <span style=color:#f92672>=</span> max(ans, dfs(root<span style=color:#f92672>-&gt;</span>right, total));
+</span><span style=color:#75715e></span>				ans <span style=color:#f92672>=</span> max(ans, solve(root<span style=color:#f92672>-&gt;</span>right, total));
 			}
 			
 			<span style=color:#66d9ef>return</span> ans;
