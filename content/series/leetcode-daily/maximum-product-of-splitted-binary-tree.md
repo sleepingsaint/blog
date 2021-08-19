@@ -65,11 +65,11 @@ To avoid calculating the sum for each subtree we maintain a variable called tota
 			if(!root) return 0;
 			ll total = (ll) getSum(root);
 			
-			return dfs(root, total) % mod;
+			return solve(root, total) % mod;
 		}
 		
 		// recursively computing the answer
-		long long dfs(TreeNode* root, long long total){
+		long long solve(TreeNode* root, long long total){
 			if(!root) return 0;
 			
 			ll ans = 0, rsum = 0, lsum = 0;
@@ -82,7 +82,7 @@ To avoid calculating the sum for each subtree we maintain a variable called tota
 				ans = max(ans, left * rsum);
 
 				// recursively calling in the left subtree
-				ans = max(ans, dfs(root->left, total));
+				ans = max(ans, solve(root->left, total));
 			}
 			
 			// if we can split in the right subtree
@@ -93,7 +93,7 @@ To avoid calculating the sum for each subtree we maintain a variable called tota
 				ans = max(ans, right * lsum);
 				
 				// recursively calling the right subtree
-				ans = max(ans, dfs(root->right, total));
+				ans = max(ans, solve(root->right, total));
 			}
 			
 			return ans;
