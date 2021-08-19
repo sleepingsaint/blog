@@ -1,0 +1,108 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Maximum Product of Splitted Binary Tree</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>Given the root of a binary tree, split the binary tree into two subtrees by removing one edge such that the product of the sums of the subtrees is maximized.</p>
+<p>Return the maximum product of the sums of the two subtrees. Since the answer may be too large, return it modulo 109 + 7.</p>
+<p>Note that you need to maximize the answer before taking the mod and not after taking it.</p>
+<h2 id=examples>Examples</h2>
+<p>Input: root = [1,2,3,4,5,6] <br>
+Output: 110 <br>
+Explanation: Remove the red edge and get 2 binary trees with sum 11 and 10. Their product is 110 (11*10)</p>
+<hr>
+<p>Input: root = [1,null,2,3,4,null,null,5,6] <br>
+Output: 90 <br>
+Explanation: Remove the red edge and get 2 binary trees with sum 15 and 6.Their product is 90 (15*6)</p>
+<hr>
+<p>Input: root = [2,3,9,10,7,8,6,5,4,11,1] <br>
+Output: 1025</p>
+<hr>
+<p>Input: root = [1,1] <br>
+Output: 1</p>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>The number of nodes in the tree is in the range [2, 5 * 104].</li>
+<li>1 &lt;= Node.val &lt;= 104</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>So the logic to solve this question is very simple which is (sum of subtree 1) * (sum of subtree 2). But how to calculate the sum of subtrees. We can do a <strong>dfs</strong> to calculate the sum and then we <strong>recursively</strong> calculate the answer by splitting at each node.</p>
+<p>To avoid calculating the sum for each subtree we maintain a variable called total which holds the total sum of the tree, with this we can get the sum of other subtree, if we know the sum of another subtree.</p>
+<h2 id=code>Code</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#75715e>#define mod 1000000007
+</span><span style=color:#75715e></span>	<span style=color:#66d9ef>typedef</span> <span style=color:#66d9ef>long</span> <span style=color:#66d9ef>long</span> ll;
+
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		
+		<span style=color:#66d9ef>int</span> maxProduct(TreeNode<span style=color:#f92672>*</span> root) {
+			<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span>root) <span style=color:#66d9ef>return</span> <span style=color:#ae81ff>0</span>;
+			ll total <span style=color:#f92672>=</span> (ll) getSum(root);
+			
+			<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>dfs</span>(root, total) <span style=color:#f92672>%</span> mod;
+		}
+		
+		<span style=color:#75715e>// recursively computing the answer
+</span><span style=color:#75715e></span>		<span style=color:#66d9ef>long</span> <span style=color:#66d9ef>long</span> <span style=color:#a6e22e>dfs</span>(TreeNode<span style=color:#f92672>*</span> root, <span style=color:#66d9ef>long</span> <span style=color:#66d9ef>long</span> total){
+			<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span>root) <span style=color:#66d9ef>return</span> <span style=color:#ae81ff>0</span>;
+			
+			ll ans <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>, rsum <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>, lsum <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+			
+			<span style=color:#75715e>// if we can split in the left subtree
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// we split and check the answer
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(root<span style=color:#f92672>-&gt;</span>left){
+				ll left <span style=color:#f92672>=</span> (ll) root<span style=color:#f92672>-&gt;</span>left<span style=color:#f92672>-&gt;</span>val;
+				rsum <span style=color:#f92672>=</span> (ll) total <span style=color:#f92672>-</span> left;
+				ans <span style=color:#f92672>=</span> max(ans, left <span style=color:#f92672>*</span> rsum);
+
+				<span style=color:#75715e>// recursively calling in the left subtree
+</span><span style=color:#75715e></span>				ans <span style=color:#f92672>=</span> max(ans, dfs(root<span style=color:#f92672>-&gt;</span>left, total));
+			}
+			
+			<span style=color:#75715e>// if we can split in the right subtree
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// we split and check answer
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(root<span style=color:#f92672>-&gt;</span>right){
+				ll right <span style=color:#f92672>=</span> root<span style=color:#f92672>-&gt;</span>right<span style=color:#f92672>-&gt;</span>val;
+				lsum <span style=color:#f92672>=</span> (ll) total <span style=color:#f92672>-</span> right;
+				ans <span style=color:#f92672>=</span> max(ans, right <span style=color:#f92672>*</span> lsum);
+				
+				<span style=color:#75715e>// recursively calling the right subtree
+</span><span style=color:#75715e></span>				ans <span style=color:#f92672>=</span> max(ans, dfs(root<span style=color:#f92672>-&gt;</span>right, total));
+			}
+			
+			<span style=color:#66d9ef>return</span> ans;
+		}
+		
+		<span style=color:#75715e>// calculating the sum of the subtree with a given root
+</span><span style=color:#75715e></span>		<span style=color:#75715e>// after calculating we are updating the root val with the subtree sum
+</span><span style=color:#75715e></span>		<span style=color:#66d9ef>int</span> <span style=color:#a6e22e>getSum</span>(TreeNode<span style=color:#f92672>*</span> root){
+			<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span>root) <span style=color:#66d9ef>return</span> <span style=color:#ae81ff>0</span>;
+			<span style=color:#66d9ef>return</span> root<span style=color:#f92672>-&gt;</span>val <span style=color:#f92672>=</span> root<span style=color:#f92672>-&gt;</span>val <span style=color:#f92672>+</span> getSum(root<span style=color:#f92672>-&gt;</span>left) <span style=color:#f92672>+</span> getSum(root<span style=color:#f92672>-&gt;</span>right);
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<p>N - number of nodes in the tree</p>
+<ul>
+<li>Space Complexity: O(logN) - for the recursion stack the maximum depth will be max height of the tree</li>
+<li>Time Complexity: O(2 * N) - we are visiting every twice, once while computing the sum and the second time while computing the answer</li>
+</ul>
+</div>
+</body>
+</html>
