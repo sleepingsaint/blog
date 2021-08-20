@@ -1,0 +1,122 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Valid Sudoku</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>Determine if a 9 x 9 Sudoku board is valid. Only the filled cells need to be validated according to the following rules:</p>
+<p>Each row must contain the digits 1-9 without repetition.
+Each column must contain the digits 1-9 without repetition.
+Each of the nine 3 x 3 sub-boxes of the grid must contain the digits 1-9 without repetition.</p>
+<p>Note:</p>
+<p>A Sudoku board (partially filled) could be valid but is not necessarily solvable.
+Only the filled cells need to be validated according to the mentioned rules.</p>
+<h2 id=examples>Examples</h2>
+<div>
+<img style="margin:0 auto" src=./sudoku.png>
+<p>Input: board =</p>
+<p>[[&ldquo;5&rdquo;,&ldquo;3&rdquo;,".",".",&ldquo;7&rdquo;,".",".",".","."] <br>
+,[&ldquo;6&rdquo;,".",".",&ldquo;1&rdquo;,&ldquo;9&rdquo;,&ldquo;5&rdquo;,".",".","."]<br>
+,[".",&ldquo;9&rdquo;,&ldquo;8&rdquo;,".",".",".",".",&ldquo;6&rdquo;,"."]<br>
+,[&ldquo;8&rdquo;,".",".",".",&ldquo;6&rdquo;,".",".",".",&ldquo;3&rdquo;]<br>
+,[&ldquo;4&rdquo;,".",".",&ldquo;8&rdquo;,".",&ldquo;3&rdquo;,".",".",&ldquo;1&rdquo;]<br>
+,[&ldquo;7&rdquo;,".",".",".",&ldquo;2&rdquo;,".",".",".",&ldquo;6&rdquo;]<br>
+,[".",&ldquo;6&rdquo;,".",".",".",".",&ldquo;2&rdquo;,&ldquo;8&rdquo;,"."]<br>
+,[".",".",".",&ldquo;4&rdquo;,&ldquo;1&rdquo;,&ldquo;9&rdquo;,".",".",&ldquo;5&rdquo;]<br>
+,[".",".",".",".",&ldquo;8&rdquo;,".",".",&ldquo;7&rdquo;,&ldquo;9&rdquo;]]<br></p>
+<p>Output: true</p>
+<hr>
+<p>Input: board =</p>
+<p>[[&ldquo;8&rdquo;,&ldquo;3&rdquo;,".",".",&ldquo;7&rdquo;,".",".",".","."]<br>
+,[&ldquo;6&rdquo;,".",".",&ldquo;1&rdquo;,&ldquo;9&rdquo;,&ldquo;5&rdquo;,".",".","."]<br>
+,[".",&ldquo;9&rdquo;,&ldquo;8&rdquo;,".",".",".",".",&ldquo;6&rdquo;,"."]<br>
+,[&ldquo;8&rdquo;,".",".",".",&ldquo;6&rdquo;,".",".",".",&ldquo;3&rdquo;]<br>
+,[&ldquo;4&rdquo;,".",".",&ldquo;8&rdquo;,".",&ldquo;3&rdquo;,".",".",&ldquo;1&rdquo;]<br>
+,[&ldquo;7&rdquo;,".",".",".",&ldquo;2&rdquo;,".",".",".",&ldquo;6&rdquo;]<br>
+,[".",&ldquo;6&rdquo;,".",".",".",".",&ldquo;2&rdquo;,&ldquo;8&rdquo;,"."]<br>
+,[".",".",".",&ldquo;4&rdquo;,&ldquo;1&rdquo;,&ldquo;9&rdquo;,".",".",&ldquo;5&rdquo;]<br>
+,[".",".",".",".",&ldquo;8&rdquo;,".",".",&ldquo;7&rdquo;,&ldquo;9&rdquo;]]<br></p>
+<p>Output: false<br></p>
+<p>Explanation: Same as Example 1, except with the 5 in the top left corner being modified to 8. Since there are two 8&rsquo;s in the top left 3x3 sub-box, it is invalid.</p>
+</div>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>board.length == 9</li>
+<li>board[i].length == 9</li>
+<li>board[i][j] is a digit or &lsquo;.&rsquo;</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>We can check the validity of the position in the row and in the col by just iterating in the same row by keeping the column index constant and in the same column keeping the row index constant, but the tricky problem is to check if the digit is valid in the current box. We have three boxes in a row and three boxes in a column, so we could use a set to store the digits in the box.</p>
+<h2 id=code>Code</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		<span style=color:#66d9ef>bool</span> isValidSudoku(vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>char</span><span style=color:#f92672>&gt;&gt;&amp;</span> board) {
+			<span style=color:#75715e>// set array to store the elements in the current box
+</span><span style=color:#75715e></span>			set<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>char</span><span style=color:#f92672>&gt;</span> box[<span style=color:#ae81ff>3</span>][<span style=color:#ae81ff>3</span>];
+			
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>9</span>; i<span style=color:#f92672>++</span>){
+				<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> j <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; j <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>9</span>; j<span style=color:#f92672>++</span>){
+					<span style=color:#66d9ef>if</span>(board[i][j] <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;.&#39;</span>)
+						<span style=color:#66d9ef>continue</span>;
+
+					<span style=color:#66d9ef>char</span> c <span style=color:#f92672>=</span> board[i][j];
+					
+					<span style=color:#66d9ef>int</span> x <span style=color:#f92672>=</span> i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, y <span style=color:#f92672>=</span> j <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>;
+
+					<span style=color:#75715e>// checking if digit is valid in the row
+</span><span style=color:#75715e></span>					<span style=color:#66d9ef>for</span>(; x <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>9</span>; x<span style=color:#f92672>++</span>)
+						<span style=color:#66d9ef>if</span>(board[x][j] <span style=color:#f92672>==</span> c)
+							<span style=color:#66d9ef>return</span> false;
+					<span style=color:#66d9ef>for</span>(x <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; x <span style=color:#f92672>&lt;</span> i; x<span style=color:#f92672>++</span>)
+						<span style=color:#66d9ef>if</span>(board[x][j] <span style=color:#f92672>==</span> c)
+							<span style=color:#66d9ef>return</span> false;
+					
+					<span style=color:#75715e>// checking if digit is valid in the column
+</span><span style=color:#75715e></span>					<span style=color:#66d9ef>for</span>(; y <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>9</span>; y<span style=color:#f92672>++</span>)
+						<span style=color:#66d9ef>if</span>(board[i][y] <span style=color:#f92672>==</span> c)
+							<span style=color:#66d9ef>return</span> false;
+					<span style=color:#66d9ef>for</span>(y <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; y <span style=color:#f92672>&lt;</span> j; y<span style=color:#f92672>++</span>)
+						<span style=color:#66d9ef>if</span>(board[i][y] <span style=color:#f92672>==</span> c)
+							<span style=color:#66d9ef>return</span> false;
+					
+					<span style=color:#75715e>// checking if the digit is valid in the box
+</span><span style=color:#75715e></span>					<span style=color:#75715e>// all the elements in the box have the same index
+</span><span style=color:#75715e></span>					<span style=color:#75715e>// if we divide their indexes with 3
+</span><span style=color:#75715e></span>					x <span style=color:#f92672>=</span> i <span style=color:#f92672>/</span> <span style=color:#ae81ff>3</span>, y <span style=color:#f92672>=</span> j <span style=color:#f92672>/</span> <span style=color:#ae81ff>3</span>;
+					<span style=color:#66d9ef>if</span>(box[x][y].find(c) <span style=color:#f92672>!=</span> box[x][y].end())
+						<span style=color:#66d9ef>return</span> false;
+					
+					<span style=color:#75715e>// else add the digit to the current box
+</span><span style=color:#75715e></span>					<span style=color:#75715e>// to check for other digits
+</span><span style=color:#75715e></span>					box[x][y].insert(c);
+				}
+			}
+			<span style=color:#75715e>// if all the digits are in valid positions
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// we return true 
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>return</span> true;
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<ul>
+<li>Space Complexity: O(81) - in the worst case we store all the 81 elements</li>
+<li>Time Complexity: O(81 * 81 * (18 + log9)) - 18 for checking the row and column digits and log9 for storing the digit in the boxes.</li>
+</ul>
+</div>
+</body>
+</html>
