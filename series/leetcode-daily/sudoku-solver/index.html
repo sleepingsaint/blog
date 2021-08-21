@@ -1,0 +1,170 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Sudoku Solver</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>Write a program to solve a Sudoku puzzle by filling the empty cells.</p>
+<p>A sudoku solution must satisfy all of the following rules:</p>
+<ol>
+<li>Each of the digits 1-9 must occur exactly once in each row.</li>
+<li>Each of the digits 1-9 must occur exactly once in each column.</li>
+<li>Each of the digits 1-9 must occur exactly once in each of the 9 3x3 sub-boxes of the grid.</li>
+</ol>
+<p>The &lsquo;.&rsquo; character indicates empty cells.</p>
+<h2 id=examples>Examples</h2>
+<div style=display:flex;justify-content:space-around>
+<img src=unsolved_board.png>
+<img src=solved_board.png>
+</div>
+<p>Input: board =</p>
+<p>[
+[&ldquo;5&rdquo;,&ldquo;3&rdquo;,".",".",&ldquo;7&rdquo;,".",".",".","."],<br>
+[&ldquo;6&rdquo;,".",".",&ldquo;1&rdquo;,&ldquo;9&rdquo;,&ldquo;5&rdquo;,".",".","."],<br>
+[".",&ldquo;9&rdquo;,&ldquo;8&rdquo;,".",".",".",".",&ldquo;6&rdquo;,"."],<br>
+[&ldquo;8&rdquo;,".",".",".",&ldquo;6&rdquo;,".",".",".",&ldquo;3&rdquo;],<br>
+[&ldquo;4&rdquo;,".",".",&ldquo;8&rdquo;,".",&ldquo;3&rdquo;,".",".",&ldquo;1&rdquo;],<br>
+[&ldquo;7&rdquo;,".",".",".",&ldquo;2&rdquo;,".",".",".",&ldquo;6&rdquo;],<br>
+[".",&ldquo;6&rdquo;,".",".",".",".",&ldquo;2&rdquo;,&ldquo;8&rdquo;,"."],<br>
+[".",".",".",&ldquo;4&rdquo;,&ldquo;1&rdquo;,&ldquo;9&rdquo;,".",".",&ldquo;5&rdquo;],<br>
+[".",".",".",".",&ldquo;8&rdquo;,".",".",&ldquo;7&rdquo;,&ldquo;9&rdquo;]
+]</p>
+<p>Output:</p>
+<p>[
+[&ldquo;5&rdquo;,&ldquo;3&rdquo;,&ldquo;4&rdquo;,&ldquo;6&rdquo;,&ldquo;7&rdquo;,&ldquo;8&rdquo;,&ldquo;9&rdquo;,&ldquo;1&rdquo;,&ldquo;2&rdquo;],<br>
+[&ldquo;6&rdquo;,&ldquo;7&rdquo;,&ldquo;2&rdquo;,&ldquo;1&rdquo;,&ldquo;9&rdquo;,&ldquo;5&rdquo;,&ldquo;3&rdquo;,&ldquo;4&rdquo;,&ldquo;8&rdquo;],<br>
+[&ldquo;1&rdquo;,&ldquo;9&rdquo;,&ldquo;8&rdquo;,&ldquo;3&rdquo;,&ldquo;4&rdquo;,&ldquo;2&rdquo;,&ldquo;5&rdquo;,&ldquo;6&rdquo;,&ldquo;7&rdquo;],<br>
+[&ldquo;8&rdquo;,&ldquo;5&rdquo;,&ldquo;9&rdquo;,&ldquo;7&rdquo;,&ldquo;6&rdquo;,&ldquo;1&rdquo;,&ldquo;4&rdquo;,&ldquo;2&rdquo;,&ldquo;3&rdquo;],<br>
+[&ldquo;4&rdquo;,&ldquo;2&rdquo;,&ldquo;6&rdquo;,&ldquo;8&rdquo;,&ldquo;5&rdquo;,&ldquo;3&rdquo;,&ldquo;7&rdquo;,&ldquo;9&rdquo;,&ldquo;1&rdquo;],<br>
+[&ldquo;7&rdquo;,&ldquo;1&rdquo;,&ldquo;3&rdquo;,&ldquo;9&rdquo;,&ldquo;2&rdquo;,&ldquo;4&rdquo;,&ldquo;8&rdquo;,&ldquo;5&rdquo;,&ldquo;6&rdquo;],<br>
+[&ldquo;9&rdquo;,&ldquo;6&rdquo;,&ldquo;1&rdquo;,&ldquo;5&rdquo;,&ldquo;3&rdquo;,&ldquo;7&rdquo;,&ldquo;2&rdquo;,&ldquo;8&rdquo;,&ldquo;4&rdquo;],<br>
+[&ldquo;2&rdquo;,&ldquo;8&rdquo;,&ldquo;7&rdquo;,&ldquo;4&rdquo;,&ldquo;1&rdquo;,&ldquo;9&rdquo;,&ldquo;6&rdquo;,&ldquo;3&rdquo;,&ldquo;5&rdquo;],<br>
+[&ldquo;3&rdquo;,&ldquo;4&rdquo;,&ldquo;5&rdquo;,&ldquo;2&rdquo;,&ldquo;8&rdquo;,&ldquo;6&rdquo;,&ldquo;1&rdquo;,&ldquo;7&rdquo;,&ldquo;9&rdquo;]
+]</p>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>board.length == 9</li>
+<li>board[i].length == 9</li>
+<li>board[i][j] is a digit or &lsquo;.&rsquo;.</li>
+<li>It is guaranteed that the input board has only one solution.</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>This problem is next step of the yesterday&rsquo;s problem <a href=/blog/series/leetcode-daily/valid-sudoku/>valid sudoku</a>. To this solve this problem, we use <strong>backtracking and dfs</strong> technique to try to fill the empty cells and validate them and if it is valid we keep forward else we backtrack and try with another combination.</p>
+<h2 id=code>Code</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		<span style=color:#75715e>// set array to store the elements in the current box
+</span><span style=color:#75715e></span>		set<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>char</span><span style=color:#f92672>&gt;</span> box[<span style=color:#ae81ff>3</span>][<span style=color:#ae81ff>3</span>];
+		vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>char</span><span style=color:#f92672>&gt;&gt;</span> res;
+
+		<span style=color:#75715e>// checks if the character c can be placed in the given position (i, j)
+</span><span style=color:#75715e></span>		<span style=color:#66d9ef>bool</span> <span style=color:#a6e22e>isValid</span>(vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>char</span><span style=color:#f92672>&gt;&gt;</span> <span style=color:#f92672>&amp;</span>board, <span style=color:#66d9ef>int</span> i, <span style=color:#66d9ef>int</span> j, <span style=color:#66d9ef>char</span> c){
+			<span style=color:#75715e>// checking if the digit is valid in the box
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// all the elements in the box have the same index
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// if we divide their indexes with 3
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(box[i <span style=color:#f92672>/</span> <span style=color:#ae81ff>3</span>][j <span style=color:#f92672>/</span> <span style=color:#ae81ff>3</span>].find(c) <span style=color:#f92672>!=</span> box[i <span style=color:#f92672>/</span> <span style=color:#ae81ff>3</span>][j <span style=color:#f92672>/</span> <span style=color:#ae81ff>3</span>].end())
+				<span style=color:#66d9ef>return</span> false;
+
+			<span style=color:#75715e>// checking if digit is valid in the row
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> x <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; x <span style=color:#f92672>&lt;</span> i; x<span style=color:#f92672>++</span>)
+				<span style=color:#66d9ef>if</span>(board[x][j] <span style=color:#f92672>==</span> c)
+					<span style=color:#66d9ef>return</span> false;
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> x <span style=color:#f92672>=</span> i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>; x <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>9</span>; x<span style=color:#f92672>++</span>)
+				<span style=color:#66d9ef>if</span>(board[x][j] <span style=color:#f92672>==</span> c)
+					<span style=color:#66d9ef>return</span> false;
+
+			<span style=color:#75715e>// checking if digit is valid in the column
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> y <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; y <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>9</span>; y<span style=color:#f92672>++</span>)
+				<span style=color:#66d9ef>if</span>(board[i][y] <span style=color:#f92672>==</span> c)
+					<span style=color:#66d9ef>return</span> false;
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> y <span style=color:#f92672>=</span> j <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>; y <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>9</span>; y<span style=color:#f92672>++</span>)
+				<span style=color:#66d9ef>if</span>(board[i][y] <span style=color:#f92672>==</span> c)
+					<span style=color:#66d9ef>return</span> false;
+
+			<span style=color:#66d9ef>return</span> true;
+		}
+
+		<span style=color:#66d9ef>void</span> <span style=color:#a6e22e>solveSudoku</span>(vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>char</span><span style=color:#f92672>&gt;&gt;&amp;</span> board) {
+			<span style=color:#75715e>// initially storing all the given cells
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>9</span>; i<span style=color:#f92672>++</span>){
+				<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> j <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; j <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>9</span>; j<span style=color:#f92672>++</span>){
+					<span style=color:#66d9ef>if</span>(board[i][j] <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;.&#39;</span>){
+						<span style=color:#66d9ef>continue</span>;
+					}
+					box[i <span style=color:#f92672>/</span> <span style=color:#ae81ff>3</span>][j <span style=color:#f92672>/</span> <span style=color:#ae81ff>3</span>].insert(board[i][j]);
+				}
+			}
+
+			<span style=color:#75715e>// recursively solving the board using dfs approach
+</span><span style=color:#75715e></span>			solve(board, <span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>0</span>);
+			board <span style=color:#f92672>=</span> res;
+		}
+
+		<span style=color:#66d9ef>void</span> <span style=color:#a6e22e>solve</span>(vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>char</span><span style=color:#f92672>&gt;&gt;</span> <span style=color:#f92672>&amp;</span>board, <span style=color:#66d9ef>int</span> i, <span style=color:#66d9ef>int</span> j){
+			<span style=color:#75715e>// if we reached the 9th row that
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// means the board is filled completely and is valid sudoku
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// so we store the answer and exit the recursion
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(i <span style=color:#f92672>==</span> <span style=color:#ae81ff>9</span>){
+				res <span style=color:#f92672>=</span> board;
+				<span style=color:#66d9ef>return</span>;
+			}
+
+			<span style=color:#75715e>// finding the empty cell in the current row
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>for</span>(; j <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>9</span>; j<span style=color:#f92672>++</span>){
+				<span style=color:#66d9ef>if</span>(board[i][j] <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;.&#39;</span>)
+					<span style=color:#66d9ef>break</span>;
+			}
+
+			<span style=color:#75715e>// if there is no empty cell in the current row
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// then move to the next row of the board
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(j <span style=color:#f92672>==</span> <span style=color:#ae81ff>9</span>)
+				solve(board, i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>0</span>);
+			<span style=color:#66d9ef>else</span>{
+				<span style=color:#75715e>// we try to fill the board with characters one by one
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// and check if the character is valid or not
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// else we backtrack
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>char</span> c <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;1&#39;</span>; c <span style=color:#f92672>&lt;=</span> <span style=color:#e6db74>&#39;9&#39;</span>; c<span style=color:#f92672>++</span>){
+
+					<span style=color:#75715e>// checking if this character c can be placed in this position
+</span><span style=color:#75715e></span>					<span style=color:#66d9ef>if</span>(isValid(board, i, j, c)){
+						<span style=color:#75715e>// if we can, then place the character and 
+</span><span style=color:#75715e></span>						<span style=color:#75715e>// recursively solve the board
+</span><span style=color:#75715e></span>						board[i][j] <span style=color:#f92672>=</span> c;
+						box[i <span style=color:#f92672>/</span> <span style=color:#ae81ff>3</span>][j <span style=color:#f92672>/</span> <span style=color:#ae81ff>3</span>].insert(c);
+
+						<span style=color:#75715e>// calling the recursive solve function
+</span><span style=color:#75715e></span>						solve(board, i, j);
+
+						<span style=color:#75715e>// backtracking step
+</span><span style=color:#75715e></span>						<span style=color:#75715e>// we replace the character with the empty cell
+</span><span style=color:#75715e></span>						board[i][j] <span style=color:#f92672>=</span> <span style=color:#e6db74>&#39;.&#39;</span>;
+						box[i <span style=color:#f92672>/</span> <span style=color:#ae81ff>3</span>][j <span style=color:#f92672>/</span> <span style=color:#ae81ff>3</span>].erase(c);
+					}
+				}
+			}
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<ul>
+<li>Space Complexity: O(81 + 81) - we need to store all the number in boxes matrix, another 81 is for the recursion stack</li>
+<li>Time Complexity: O(81^9) - at every empty cell we can choose 9 different options, in total we have 81 cells in the worst case we have 81 empty cells so the time complexity in that case would be 81 power 9.</li>
+</ul>
+</div>
+</body>
+</html>
