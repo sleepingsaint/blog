@@ -1,0 +1,146 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Rectangle Area 2</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>We are given a list of (axis-aligned) rectangles. Each rectangle[i] = [xi1, yi1, xi2, yi2] , where (xi1, yi1) are the coordinates of the bottom-left corner, and (xi2, yi2) are the coordinates of the top-right corner of the ith rectangle.</p>
+<p>Find the total area covered by all rectangles in the plane. Since the answer may be too large, return it modulo 10^9 + 7.</p>
+<h2 id=examples>Examples</h2>
+<div>
+<img src=example_1.png style=width:80%;background:salmon>
+</div>
+<p>Input: rectangles = [[0,0,2,2],[1,0,2,3],[1,0,3,1]] <br>
+Output: 6 <br>
+Explanation: As illustrated in the picture.</p>
+<hr>
+<p>Input: rectangles = [[0,0,1000000000,1000000000]] <br>
+Output: 49 <br>
+Explanation: The answer is 1018 modulo (109 + 7), which is (109)2 = (-7)2 = 49.</p>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>1 &lt;= rectangles.length &lt;= 200</li>
+<li>rectanges[i].length = 4</li>
+<li>0 &lt;= rectangles[i][j] &lt;= 10^9</li>
+<li>The total area covered by all rectangles will never exceed 2^63 - 1 and thus will fit in a 64-bit signed integer.</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>First idea which strikes is to maintain a matrix which represents a grid and marks all the cells in the given rectangles and finally calculate the answer. This is a decent approach if the grid is small, but given the constraints it will only raise memory exceeded and time limit exceeded errors.</p>
+<p>So we need to think a better approach. Now if you look closely to find the area of a certain portion like [1, 2] if we know the total height or space covered by the rectangles the area in that region will (2 - 1) * (space covered in the region). So now the problem is how to iterate over the regions and how to calculate the space (height) in the region.</p>
+<p>If we start iterating, from the 0 to the 10^9 we make a lot of redundant calculations, instead we can iterate over the ranges where the rectangles exists. This is will save a lot of computation time. Now how to measure the height, for this we can store a hashmap to store all the rectangles in the region.</p>
+<p>While iterating if we encounter a closing range for a rectangle we remove the rectangle from the hashmap, similarly if we encounter a starting range for a rectangle we add the rectangle to the hashmap. So to iterate the range we create a array of the opening and closing range of the rectangles and sort it in increasing order of the range positions, so that we don&rsquo;t miss any rectangles and also don&rsquo;t duplicate areas.</p>
+<p><strong>Note</strong>: If we encounter a case where at a point we have both closing range of a rectangle and opening range of another rectangle we need to first remove the previous rectangle so that we don&rsquo;t calculate the area of the previous rectangle again.</p>
+<h2 id=code>Code</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>typedef</span> vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;</span> vvi;
+	<span style=color:#66d9ef>typedef</span> pair<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span>, <span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> pii;
+	<span style=color:#66d9ef>typedef</span> vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> vi;
+
+	<span style=color:#75715e>#define mod 1000000007
+</span><span style=color:#75715e></span>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		<span style=color:#66d9ef>long</span> <span style=color:#66d9ef>long</span> calcArea(<span style=color:#66d9ef>int</span> width, map<span style=color:#f92672>&lt;</span>pii, <span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> <span style=color:#f92672>&amp;</span>intervals){
+			<span style=color:#66d9ef>long</span> <span style=color:#66d9ef>long</span> area <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+
+			<span style=color:#75715e>// this variable maintains the previous rectangle top
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>long</span> <span style=color:#66d9ef>long</span> prevTop <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+			
+			<span style=color:#75715e>// calculating the total height / area
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// of the merged intervals
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>auto</span> it: intervals){
+				<span style=color:#66d9ef>if</span>(it.second <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>)
+					<span style=color:#66d9ef>continue</span>;
+				pair<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span>, <span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> interval <span style=color:#f92672>=</span> it.first;
+				<span style=color:#66d9ef>long</span> <span style=color:#66d9ef>long</span> bottom <span style=color:#f92672>=</span> interval.first, top <span style=color:#f92672>=</span> interval.second;
+				bottom <span style=color:#f92672>=</span> max(bottom, prevBottom);
+
+				<span style=color:#75715e>// if the bottom is still less then the current top
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// then we add it to the area and make the current top
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// as prevTop
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>if</span>(top <span style=color:#f92672>&gt;</span> bottom){
+					area <span style=color:#f92672>+=</span> (top <span style=color:#f92672>-</span> bottom) <span style=color:#f92672>*</span> width;
+					prevBottom <span style=color:#f92672>=</span> top;
+				}
+			}
+			
+			<span style=color:#66d9ef>return</span> area;
+		}
+		<span style=color:#66d9ef>int</span> <span style=color:#a6e22e>rectangleArea</span>(vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;&amp;</span> rectangles) {
+			<span style=color:#75715e>// if there are no rectangles then
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// area enclosed will be zero
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(rectangles.empty())
+				<span style=color:#66d9ef>return</span> <span style=color:#ae81ff>0</span>;
+			
+			<span style=color:#75715e>// creating an array to iterate over the 
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// range which all the rectangles exists 
+</span><span style=color:#75715e></span>
+			<span style=color:#75715e>// I assumed the opening range and closing range as events 
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// and created a events array to store the events
+</span><span style=color:#75715e></span>			vvi events;
+			<span style=color:#66d9ef>for</span>(vi <span style=color:#f92672>&amp;</span>rec: rectangles){
+				<span style=color:#75715e>// adding 0 for the closing event so that 
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// after sorting we access the closing event first
+</span><span style=color:#75715e></span>				events.push_back(vi{rec[<span style=color:#ae81ff>0</span>], <span style=color:#ae81ff>1</span>, rec[<span style=color:#ae81ff>1</span>], rec[<span style=color:#ae81ff>3</span>]});
+				events.push_back(vi{rec[<span style=color:#ae81ff>2</span>], <span style=color:#ae81ff>0</span>, rec[<span style=color:#ae81ff>1</span>], rec[<span style=color:#ae81ff>3</span>]});
+			}
+			
+			<span style=color:#75715e>// sorting the array so that we visit
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// the grid in an increasing range
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// and also we encounter the closing range of a rectangle first
+</span><span style=color:#75715e></span>			sort(events.begin(), events.end());
+
+			<span style=color:#66d9ef>long</span> <span style=color:#66d9ef>long</span> area <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+			
+			<span style=color:#75715e>// hashmap to store the rectangles in the current range
+</span><span style=color:#75715e></span>			map<span style=color:#f92672>&lt;</span>pair<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span>, <span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span>, <span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> intervals;
+			
+			<span style=color:#75715e>// this variable maintains the prev xposition of the current range
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>int</span> prev <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+			
+			<span style=color:#75715e>// iterating over the range
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>for</span>(vi <span style=color:#f92672>&amp;</span>event: events){
+				<span style=color:#75715e>// calculating the area of the current region [prev, event[0]]
+</span><span style=color:#75715e></span>				area <span style=color:#f92672>+=</span> calcArea(event[<span style=color:#ae81ff>0</span>] <span style=color:#f92672>-</span> prev, intervals);
+				
+				<span style=color:#75715e>// if we encounter a starting range of rectangle
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// we add it to the intervals hashmap else
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// remove the rectangle hashmap
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>if</span>(event[<span style=color:#ae81ff>1</span>] <span style=color:#f92672>==</span> <span style=color:#ae81ff>1</span>){
+					intervals[{event[<span style=color:#ae81ff>2</span>], event[<span style=color:#ae81ff>3</span>]}]<span style=color:#f92672>++</span>;
+				}<span style=color:#66d9ef>else</span> intervals[{event[<span style=color:#ae81ff>2</span>], event[<span style=color:#ae81ff>3</span>]}]<span style=color:#f92672>--</span>;
+				
+				<span style=color:#75715e>// since we already calculated the current range area
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// we calculate the area of the next range by updating the
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// previous x position to current x position 
+</span><span style=color:#75715e></span>				prev <span style=color:#f92672>=</span> event[<span style=color:#ae81ff>0</span>];
+			}
+
+			<span style=color:#75715e>// returning the area
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>return</span> area <span style=color:#f92672>%</span> mod;
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<p>N - number of Rectangles</p>
+<ul>
+<li>Space Complexity: O(2 * N + N) - 2*N for storing the events array and N for storing the rectangles array</li>
+<li>Time Complexity: O(2N * NlogN + 2Nlog2N) - 2Nlog2N for sorting the events array, and 2N*NlogN because we iterating over each event and for every insert and remove operation takes logN time and N time for calculating the area of the merged intervals.</li>
+</ul>
+</div>
+</body>
+</html>
