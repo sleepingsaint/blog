@@ -1,0 +1,90 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Complex Number Multiplication</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>A complex number can be represented as a string on the form &ldquo;real+imaginaryi&rdquo; where:</p>
+<ul>
+<li>real is the real part and is an integer in the range [-100, 100].</li>
+<li>imaginary is the imaginary part and is an integer in the range [-100, 100].</li>
+<li>i^2 == -1.</li>
+</ul>
+<p>Given two complex numbers num1 and num2 as strings, return a string of the complex number that represents their multiplications.</p>
+<h2 id=examples>Examples</h2>
+<p>Input: num1 = &ldquo;1+1i&rdquo;, num2 = &ldquo;1+1i&rdquo;<br>
+Output: &ldquo;0+2i&rdquo;<br>
+Explanation: (1 + i) * (1 + i) = 1 + i2 + 2 * i = 2i, and you need convert it to the form of 0+2i.</p>
+<hr>
+<p>Input: num1 = &ldquo;1+-1i&rdquo;, num2 = &ldquo;1+-1i&rdquo;<br>
+Output: &ldquo;0+-2i&rdquo;<br>
+Explanation: (1 - i) * (1 - i) = 1 + i2 - 2 * i = -2i, and you need convert it to the form of 0+-2i.</p>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>num1 and num2 are valid complex numbers.</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>The solution for this problem is very straight forward. We need to parse the real and imaginary parts of the given numbers and then perform the multiplication and convert the result back to the answer. The real trick is to know how to convert the string to integer and vice versa.</p>
+<h2 id=code>Code</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		string complexNumberMultiply(string num1, string num2) {
+			<span style=color:#75715e>// calculating the integer representation of the numbers
+</span><span style=color:#75715e></span>			vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> n1 <span style=color:#f92672>=</span> getNum(num1), n2 <span style=color:#f92672>=</span> getNum(num2);
+
+			<span style=color:#75715e>// calculating the real, imaginary parts of the result
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>int</span> real <span style=color:#f92672>=</span> n1[<span style=color:#ae81ff>0</span>]<span style=color:#f92672>*</span>n2[<span style=color:#ae81ff>0</span>] <span style=color:#f92672>-</span> (n1[<span style=color:#ae81ff>1</span>]<span style=color:#f92672>*</span>n2[<span style=color:#ae81ff>1</span>]);
+			<span style=color:#66d9ef>int</span> complex <span style=color:#f92672>=</span> n1[<span style=color:#ae81ff>1</span>]<span style=color:#f92672>*</span>n2[<span style=color:#ae81ff>0</span>] <span style=color:#f92672>+</span> n1[<span style=color:#ae81ff>0</span>]<span style=color:#f92672>*</span>n2[<span style=color:#ae81ff>1</span>];
+
+			<span style=color:#75715e>// converting the result to the string format
+</span><span style=color:#75715e></span>			string res <span style=color:#f92672>=</span> to_string(real) <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;+&#34;</span> <span style=color:#f92672>+</span> to_string(complex) <span style=color:#f92672>+</span> <span style=color:#e6db74>&#34;i&#34;</span>;
+			<span style=color:#66d9ef>return</span> res;
+		}
+		
+		<span style=color:#75715e>// converting the complex number in string form 
+</span><span style=color:#75715e></span>		<span style=color:#75715e>// to real and imaginary components and returning
+</span><span style=color:#75715e></span>		<span style=color:#75715e>// in vector&lt;int&gt;{real, imaginary} format
+</span><span style=color:#75715e></span>		vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> getNum(string num){
+			vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> res;
+			
+			<span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> num.length(), i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>, start <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+			
+			<span style=color:#66d9ef>while</span>(i <span style=color:#f92672>&lt;</span> n){
+				<span style=color:#75715e>// if we encounter the +, i characters then 
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// we found the real and imaginary parts
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// hence we parse the corresponding substring
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// and add it to the answer
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>if</span>(num[i] <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;+&#39;</span> <span style=color:#f92672>||</span> num[i] <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;i&#39;</span>){
+					res.push_back(stoi(num.substr(start, i <span style=color:#f92672>-</span> start)));
+					start <span style=color:#f92672>=</span> i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>;
+				}
+				i<span style=color:#f92672>++</span>;
+			}
+			
+			<span style=color:#66d9ef>return</span> res;
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<ul>
+<li>Space Complexity: O(1) - Since no matter what the input is we would store two vectors of length 2</li>
+<li>Time Complexity: O(n) - where n is the maximum of num1, num2 string lengths, since we are calculating the real, complex parts of the number</li>
+</ul>
+</div>
+</body>
+</html>
