@@ -1,0 +1,69 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Sum of Square Numbers</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>Given a non-negative integer c, decide whether there&rsquo;re two integers a and b such that a^2 + b^2 = c.</p>
+<h2 id=examples>Examples</h2>
+<p>Input: c = 5 <br>
+Output: true <br>
+Explanation: 1 * 1 + 2 * 2 = 5</p>
+<hr>
+<p>Input: c = 3 <br>
+Output: false</p>
+<hr>
+<p>Input: c = 4 <br>
+Output: true</p>
+<hr>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>0 &lt;= c &lt;= 231 - 1</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>The maximum value for a, b is square root of c, and the other value will be 0. So we need to check from 0 to square root of c and check if the remaining part is perfect square or not. The code below will give you better understanding.</p>
+<h2 id=code>Code</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		<span style=color:#66d9ef>bool</span> judgeSquareSum(<span style=color:#66d9ef>int</span> c) {
+			<span style=color:#66d9ef>int</span> m <span style=color:#f92672>=</span> sqrt(c), n, k;
+
+			<span style=color:#75715e>// iterating from 0 to the square root of c
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;=</span> m; i<span style=color:#f92672>++</span>){
+				n <span style=color:#f92672>=</span> c <span style=color:#f92672>-</span> (i <span style=color:#f92672>*</span> i);
+				k <span style=color:#f92672>=</span> sqrt(n);
+
+				<span style=color:#75715e>// checking if the remaining part is a
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// perfect square or not. If is a perfect
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// square return true, else continue
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>if</span>(k<span style=color:#f92672>*</span>k <span style=color:#f92672>==</span> n)
+					<span style=color:#66d9ef>return</span> true;
+			}
+			
+			<span style=color:#66d9ef>return</span> false;
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<ul>
+<li>Space Complexity: O(1) - No matter the input we always have only three variables hence the constant complexity</li>
+<li>Time Complexity: O(sqrt(c)) - since we iterate till the square root of the c</li>
+</ul>
+</div>
+</body>
+</html>
