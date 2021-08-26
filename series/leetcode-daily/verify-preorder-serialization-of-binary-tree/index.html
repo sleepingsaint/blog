@@ -1,0 +1,112 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Verify Preorder Serialization of Binary Tree</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>One way to serialize a binary tree is to use preorder traversal. When we encounter a non-null node, we record the node&rsquo;s value. If it is a null node, we record using a sentinel value such as &lsquo;#&rsquo;.</p>
+<p>For example, the above binary tree can be serialized to the string &ldquo;9,3,4,#,#,1,#,#,2,#,6,#,#&rdquo;, where &lsquo;#&rsquo; represents a null node.</p>
+<p>Given a string of comma-separated values preorder, return true if it is a correct preorder traversal serialization of a binary tree.</p>
+<p>It is guaranteed that each comma-separated value in the string must be either an integer or a character &lsquo;#&rsquo; representing null pointer.</p>
+<p>You may assume that the input format is always valid.</p>
+<p>For example, it could never contain two consecutive commas, such as &ldquo;1,,3&rdquo;.</p>
+<p>Note: You are not allowed to reconstruct the tree.</p>
+<h2 id=examples>Examples</h2>
+<p><img src=example1.jpg></p>
+<p>Input: preorder = &ldquo;9,3,4,#,#,1,#,#,2,#,6,#,#&rdquo; <br>
+Output: true</p>
+<hr>
+<p>Input: preorder = &ldquo;1,#&rdquo; <br>
+Output: false</p>
+<hr>
+<p>Input: preorder = &ldquo;9,#,#,1&rdquo; <br>
+Output: false</p>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>1 &lt;= preorder.length &lt;= 104</li>
+<li>preoder consist of integers in the range [0, 100] and &lsquo;#&rsquo; separated by commas &lsquo;,&rsquo;.</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>To solve this problem, we need to validate the given may be preorder traversal string. As per the question for every leaf node we need two #&rsquo;s following the current character and also only root node, since a valid binary tree have only one root node.</p>
+<p>At every node we recursively solve for the validilty of left and right subtrees.</p>
+<h2 id=code>Code</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		<span style=color:#66d9ef>bool</span> isValidSerialization(string preorder) {
+			<span style=color:#66d9ef>int</span> index <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+			
+			<span style=color:#75715e>// converting the given string into vector of nodes
+</span><span style=color:#75715e></span>			vector<span style=color:#f92672>&lt;</span>string<span style=color:#f92672>&gt;</span> str;
+			<span style=color:#66d9ef>int</span> start <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> preorder.length(); i<span style=color:#f92672>++</span>){
+				<span style=color:#66d9ef>if</span>(preorder[i] <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;,&#39;</span>){
+					str.push_back(preorder.substr(start, i <span style=color:#f92672>-</span> start));
+					start <span style=color:#f92672>=</span> i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>;
+				}
+			}
+			str.push_back(preorder.substr(start, preorder.length() <span style=color:#f92672>-</span> start));
+			
+			<span style=color:#75715e>// calling the recursive function
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>bool</span> ans <span style=color:#f92672>=</span> solve(str, index);
+			
+			<span style=color:#75715e>// we also check if all the nodes are visited or not
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// if not then there are more than 1 root node
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// which invalidates the tree
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>return</span> ans <span style=color:#f92672>&amp;&amp;</span> index <span style=color:#f92672>==</span> str.size() <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>;
+			
+		}
+		
+		<span style=color:#66d9ef>bool</span> <span style=color:#a6e22e>solve</span>(vector<span style=color:#f92672>&lt;</span>string<span style=color:#f92672>&gt;</span> <span style=color:#f92672>&amp;</span>preorder, <span style=color:#66d9ef>int</span> <span style=color:#f92672>&amp;</span>i){
+			<span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> preorder.size();
+
+			<span style=color:#75715e>// if given root is leaf, then it is still valid
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(preorder[i] <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;#&#34;</span>)
+				<span style=color:#66d9ef>return</span> true;
+			
+			<span style=color:#75715e>// if there are no subtrees for a node
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// i.e we have to have atleast two # as children
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// then return false
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(i <span style=color:#f92672>==</span> n <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>)
+				<span style=color:#66d9ef>return</span> false;
+			
+			<span style=color:#66d9ef>bool</span> ans <span style=color:#f92672>=</span> true;
+			
+			<span style=color:#75715e>// solving for the left subtree
+</span><span style=color:#75715e></span>			ans <span style=color:#f92672>&amp;=</span> solve(preorder, <span style=color:#f92672>++</span>i);
+			
+			<span style=color:#75715e>// if left subtree is invalid or 
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// right subtree doesn&#39;t exists return false
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span>ans <span style=color:#f92672>||</span> i <span style=color:#f92672>==</span> n <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>)
+				<span style=color:#66d9ef>return</span> false;
+			
+			<span style=color:#75715e>// solving the right subtree
+</span><span style=color:#75715e></span>			ans <span style=color:#f92672>&amp;=</span> solve(preorder, <span style=color:#f92672>++</span>i);
+			<span style=color:#66d9ef>return</span> ans;
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<p>N - number of nodes in tree, (including the empty nodes)</p>
+<ul>
+<li>Space Complexity: O(N + N) - one N for storing the array of nodes, and another N for the recursive call, since we visit every node atleast once so max recursion depth will be N.</li>
+<li>Time Complexity: O(N + N) - one N for creating the array, and another N for at most N recursive calls</li>
+</ul>
+<p><br></p>
+</div>
+</body>
+</html>
