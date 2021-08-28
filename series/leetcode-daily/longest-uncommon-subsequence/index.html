@@ -1,0 +1,103 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Longest Uncommon Subsequence</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>Given an array of strings strs, return the length of the longest uncommon subsequence between them. If the longest uncommon subsequence does not exist, return -1.</p>
+<p>An uncommon subsequence between an array of strings is a string that is a subsequence of one string but not the others.</p>
+<p>A subsequence of a string s is a string that can be obtained after deleting any number of characters from s.</p>
+<p>For example, &ldquo;abc&rdquo; is a subsequence of &ldquo;aebdc&rdquo; because you can delete the underlined characters in &ldquo;aebdc&rdquo; to get &ldquo;abc&rdquo;. Other subsequences of &ldquo;aebdc&rdquo; include &ldquo;aebdc&rdquo;, &ldquo;aeb&rdquo;, and "" (empty string).</p>
+<h2 id=examples>Examples</h2>
+<p>Input: strs = [&ldquo;aba&rdquo;,&ldquo;cdc&rdquo;,&ldquo;eae&rdquo;] <br>
+Output: 3</p>
+<hr>
+<p>Input: strs = [&ldquo;aaa&rdquo;,&ldquo;aaa&rdquo;,&ldquo;aa&rdquo;] <br>
+Output: -1</p>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>1 &lt;= strs.length &lt;= 50</li>
+<li>1 &lt;= strs[i].length &lt;= 10</li>
+<li>strs[i] consists of lowercase English letters.</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>If you look closely we can see that the longest string which doesnot contain duplicate in the given strings. We also need to take care of another case, which is the string we selected should not be a subsequence of any other strings.</p>
+<h2 id=code>Code</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		<span style=color:#75715e>// helper function to check if s2 is a subsequence of s1
+</span><span style=color:#75715e></span>		<span style=color:#66d9ef>bool</span> isSubSeq(string <span style=color:#f92672>&amp;</span>s1, string <span style=color:#f92672>&amp;</span>s2){
+			<span style=color:#66d9ef>int</span> n1 <span style=color:#f92672>=</span> s1.length(), n2 <span style=color:#f92672>=</span> s2.length();
+			<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>, j <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>, count <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+			
+			<span style=color:#66d9ef>while</span> (i <span style=color:#f92672>&lt;</span> n1 <span style=color:#f92672>&amp;&amp;</span> j <span style=color:#f92672>&lt;</span> n2){
+				<span style=color:#66d9ef>if</span>(s1[i] <span style=color:#f92672>==</span> s2[j]){
+					count<span style=color:#f92672>++</span>;
+					j<span style=color:#f92672>++</span>;
+				}
+				i<span style=color:#f92672>++</span>;
+			}
+			
+			<span style=color:#66d9ef>if</span>(count <span style=color:#f92672>==</span> n2) <span style=color:#66d9ef>return</span> true;
+			<span style=color:#66d9ef>return</span> false;
+		}
+		
+		<span style=color:#66d9ef>int</span> <span style=color:#a6e22e>findLUSlength</span>(vector<span style=color:#f92672>&lt;</span>string<span style=color:#f92672>&gt;&amp;</span> strs) {
+			<span style=color:#75715e>// sorting the strings in increasing order of length
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// so that once we find a valid string we don&#39;t need to iterate 
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// over other strings, since the current string would be the longest
+</span><span style=color:#75715e></span>			sort(strs.begin(), strs.end(), [](string <span style=color:#f92672>&amp;</span>s1, string <span style=color:#f92672>&amp;</span>s2){
+				<span style=color:#66d9ef>return</span> s1.length() <span style=color:#f92672>&gt;</span> s2.length();
+			});
+			
+			<span style=color:#75715e>// hashmap to count the occurences of the strings
+</span><span style=color:#75715e></span>			unordered_map<span style=color:#f92672>&lt;</span>string, <span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> count;
+			<span style=color:#66d9ef>for</span>(string <span style=color:#f92672>&amp;</span>s: strs)
+				count[s]<span style=color:#f92672>++</span>;
+			
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> strs.size(); i<span style=color:#f92672>++</span>){
+				<span style=color:#75715e>// we only check if there are no duplicates
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// if duplicates exists the value would be more than 1
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>if</span>(count[strs[i]] <span style=color:#f92672>==</span> <span style=color:#ae81ff>1</span>){
+					<span style=color:#75715e>// checking if the current string is a 
+</span><span style=color:#75715e></span>					<span style=color:#75715e>// subsequence to any other strings
+</span><span style=color:#75715e></span>					<span style=color:#66d9ef>bool</span> isSeq <span style=color:#f92672>=</span> false;
+					<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> j <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; j <span style=color:#f92672>&lt;</span> i <span style=color:#f92672>&amp;&amp;</span> <span style=color:#f92672>!</span>isSeq; j<span style=color:#f92672>++</span>){
+						isSeq <span style=color:#f92672>|=</span> isSubSeq(strs[j], strs[i]);
+					}
+					
+					<span style=color:#75715e>// if it is not a subsequence return the string length
+</span><span style=color:#75715e></span>					<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span>isSeq)
+						<span style=color:#66d9ef>return</span> strs[i].length();
+				}
+			}
+			
+			<span style=color:#75715e>// if we didn&#39;t find any answer return -1
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>return</span> <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>;
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<p>N - number of strings, M - max length of the given strings</p>
+<ul>
+<li>Space Complexity: O(N) - in worst case we would be given all distinct strings, so we store all the strings in the hashmap</li>
+<li>Time Complexity: O(NlogN + N + NxNxM) - NlogN for sorting the strings, N for filling the hashmap, NM - for every string we are checking if it is subsequence of any other strings which are of greater length than the current string. There will be at max N strings, and M for checking if it is a subsequence or not.</li>
+</ul>
+</div>
+</body>
+</html>

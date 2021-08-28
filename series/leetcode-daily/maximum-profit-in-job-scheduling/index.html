@@ -1,0 +1,123 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Maximum Profit in Job Scheduling</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>We have n jobs, where every job is scheduled to be done from startTime[i] to endTime[i], obtaining a profit of profit[i].</p>
+<p>You&rsquo;re given the startTime, endTime and profit arrays, return the maximum profit you can take such that there are no two jobs in the subset with overlapping time range.</p>
+<p>If you choose a job that ends at time X you will be able to start another job that starts at time X.</p>
+<h2 id=examples>Examples</h2>
+<img src=example1.png>
+<p>Input: startTime = [1,2,3,3], endTime = [3,4,5,6], profit = [50,10,40,70] <br>
+Output: 120 <br>
+Explanation: The subset chosen is the first and fourth job.
+Time range [1-3]+[3-6] , we get profit of 120 = 50 + 70.</p>
+<hr>
+<img src=example2.png>
+<p>Input: startTime = [1,2,3,4,6], endTime = [3,5,10,6,9], profit = [20,20,100,70,60] <br>
+Output: 150 <br>
+Explanation: The subset chosen is the first, fourth and fifth job.
+Profit obtained 150 = 20 + 70 + 60.</p>
+<hr>
+<img src=example3.png>
+<p>Input: startTime = [1,1,1], endTime = [2,3,4], profit = [5,6,4] <br>
+Output: 6</p>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>1 &lt;= startTime.length == endTime.length == profit.length &lt;= 5 * 104</li>
+<li>1 &lt;= startTime[i] &lt; endTime[i] &lt;= 109</li>
+<li>1 &lt;= profit[i] &lt;= 104</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>For the given jobs, we might pick a job or we don&rsquo;t. If we picked a job, then we need to pick only those jobs which have starting times, greater than or equal to the picked job finish time. Since the given parameters are not in a certain, we <strong>sort</strong> the jobs based on the starting times of a job, so that if we need to look for the jobs which have greater starting time than the current picked job&rsquo;s ending time, we can be sure that the jobs before the current node are pickable.</p>
+<p>We use <strong>recursion</strong> to calculate the answer. Every recursive call calculates the maximum profit for the jobs from current job to last job. Using recursion we will calling multiple recursive calls, to avoid that we can use a <strong>memoization / dynammic programming</strong> to store the result for the given range of jobs.</p>
+<h2 id=code>Code</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#75715e>// data structure to represt the job
+</span><span style=color:#75715e></span>	<span style=color:#66d9ef>struct</span> <span style=color:#a6e22e>Job</span>{
+		<span style=color:#66d9ef>int</span> start, finish, profit;
+	};
+
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		<span style=color:#66d9ef>int</span> jobScheduling(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> startTime, vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> endTime, vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> profit) {
+			<span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> startTime.size();
+			
+			<span style=color:#75715e>// creating the jobs using the defined Job class
+</span><span style=color:#75715e></span>			vector<span style=color:#f92672>&lt;</span>Job<span style=color:#f92672>&gt;</span> jobs;
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; i<span style=color:#f92672>++</span>){
+				jobs.push_back({startTime[i], endTime[i], profit[i]});
+			}
+			
+			<span style=color:#75715e>// sorting the jobs in the order of start times
+</span><span style=color:#75715e></span>			sort(jobs.begin(), jobs.end(), [](Job <span style=color:#f92672>&amp;</span>j1, Job <span style=color:#f92672>&amp;</span>j2){
+				<span style=color:#66d9ef>return</span> j1.start <span style=color:#f92672>&lt;</span> j2.start;
+			});
+			
+			<span style=color:#75715e>// dp array to memoize the results
+</span><span style=color:#75715e></span>			vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> dp(n, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>);
+
+			<span style=color:#75715e>// calling the recursive function
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>solve</span>(jobs, dp, <span style=color:#ae81ff>0</span>);
+		}
+		
+		<span style=color:#66d9ef>int</span> <span style=color:#a6e22e>solve</span>(vector<span style=color:#f92672>&lt;</span>Job<span style=color:#f92672>&gt;</span> <span style=color:#f92672>&amp;</span>jobs, vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> <span style=color:#f92672>&amp;</span>dp, <span style=color:#66d9ef>int</span> idx){
+			<span style=color:#75715e>// if we picked all the jobs 
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// we got
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(idx <span style=color:#f92672>==</span> jobs.size())
+				<span style=color:#66d9ef>return</span> <span style=color:#ae81ff>0</span>;
+			
+			<span style=color:#75715e>// if the value is already calculated
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// then return the calculated result
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(dp[idx] <span style=color:#f92672>!=</span> <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>)
+				<span style=color:#66d9ef>return</span> dp[idx];
+			
+			<span style=color:#75715e>// this stores the result if we dont pick the job
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>int</span> exclude <span style=color:#f92672>=</span> solve(jobs, dp, idx <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>);
+
+			<span style=color:#75715e>// this stores the result if we pick the current job
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>int</span> include <span style=color:#f92672>=</span> jobs[idx].profit;
+			
+			<span style=color:#75715e>// calculating the index of next valid job 
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// whose start time is more than or equal to current job finish time
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> idx <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>;
+			<span style=color:#66d9ef>while</span>(i <span style=color:#f92672>&lt;</span> jobs.size()){
+				<span style=color:#66d9ef>if</span>(jobs[i].start <span style=color:#f92672>&gt;=</span> jobs[idx].finish)
+					<span style=color:#66d9ef>break</span>;
+				i<span style=color:#f92672>++</span>;
+			}
+			
+			<span style=color:#75715e>// if there exists a valid job
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// add the result to the current included result
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(i <span style=color:#f92672>!=</span> jobs.size())
+				include <span style=color:#f92672>+=</span> solve(jobs, dp, i);
+			
+			<span style=color:#75715e>// return maximum of included and excluded results
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>return</span> dp[idx] <span style=color:#f92672>=</span> max(exclude, include);
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<p>N - Number of jobs</p>
+<ul>
+<li>Space Complexity: O(N + N + N) - one N for the jobs array, another N for the dp array, another for the recursion stack - in worst case the maximum depth would be N</li>
+<li>Time Complexity: O(N + NlogN + NxN) - N for creating the jobs array, NlogN for sorting the jobs array, and in NxN, one N is for, for every job, we are visiting it only once, since we are storing the result in the dp table, and another N is for finding the next valid job which can take N iterations in worst case.</li>
+</ul>
+</div>
+</body>
+</html>
