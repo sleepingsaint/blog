@@ -1,0 +1,82 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Range Addition 2</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>You are given an m x n matrix M initialized with all 0&rsquo;s and an array of operations ops, where ops[i] = [ai, bi] means M[x][y] should be incremented by one for all 0 &lt;= x &lt; ai and 0 &lt;= y &lt; bi.</p>
+<p>Count and return the number of maximum integers in the matrix after performing all the operations.</p>
+<h2 id=examples>Examples</h2>
+<p><img src=example1.jpg></p>
+<p>Input: m = 3, n = 3, ops = [[2,2],[3,3]] <br>
+Output: 4 <br>
+Explanation: The maximum integer in M is 2, and there are four of it in M. So return 4.</p>
+<hr>
+<p>Input: m = 3, n = 3, ops = [[2,2],[3,3],[3,3],[3,3],[2,2],[3,3],[3,3],[3,3],[2,2],[3,3],[3,3],[3,3]] <br>
+Output: 4</p>
+<hr>
+<p>Input: m = 3, n = 3, ops = [] <br>
+Output: 9</p>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>1 &lt;= m, n &lt;= 4 * 10^4</li>
+<li>1 &lt;= ops.length &lt;= 10^4</li>
+<li>ops[i].length == 2</li>
+<li>1 &lt;= ai &lt;= m</li>
+<li>1 &lt;= bi &lt;= n</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>A brute force approach would be to mark the matrix for every operation and then find the occurences of the maximum integers. Given the constraints it will give TLE for sure.</p>
+<p>If you observe carefully, we can notice that every answer, ie., the matrix which contains maximum integer always starts at (0, 0) position. What I want to explain is that for every operation we are modifying some portion of the matrix starting from the first position [0, 0].</p>
+<p>For example consider the first example,</p>
+<ul>
+<li>First Operation: [2, 2] - we can increase all the number is in the given range</li>
+<li>Second Operation: [3, 3] - while this operation also updates the values inside the [2, 2] range</li>
+</ul>
+<p>lets say there is also another operation, say [1, 1]. After performing operation, some part of [2, 2] range gets updated and the max value will be present in the range [1, 1]. So if we perform any operation, we range with minimum range values on both axes gets updated and that range contains the answer.</p>
+<p>We can also notice one thing, which is if there are no ops to perform then all the values in the matrix which are zeros will be largest numbers hence the answer would be number of zeros in the matrix.</p>
+<p>So we calculate the minimum of x, y axes ranges and return the number of values in that range [x, y]</p>
+<h2 id=code>Code</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		<span style=color:#66d9ef>int</span> maxCount(<span style=color:#66d9ef>int</span> m, <span style=color:#66d9ef>int</span> n, vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;&amp;</span> ops) {
+			<span style=color:#75715e>// if there are no ops then all the values / zeros
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// in the matrix will be the largest numbers
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// hence the answer will be number of cells in the matrix
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(ops.empty())
+				<span style=color:#66d9ef>return</span> m<span style=color:#f92672>*</span>n;
+
+			<span style=color:#75715e>// calculating the minimum range values in both x, y axis
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>for</span>(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> <span style=color:#f92672>&amp;</span>op: ops){
+				m <span style=color:#f92672>=</span> min(m, op[<span style=color:#ae81ff>0</span>]);
+				n <span style=color:#f92672>=</span> min(n, op[<span style=color:#ae81ff>1</span>]);
+			}
+			
+			<span style=color:#66d9ef>return</span> m<span style=color:#f92672>*</span>n;
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<p>N - number of ops</p>
+<ul>
+<li>Space Complexiy: O(1) - No matter the N, we don&rsquo;t use any extra variables, hence constant space complexity</li>
+<li>Time Complexity: O(N) - for calculating the minimum values in the x, y axes.</li>
+</ul>
+</div>
+</body>
+</html>
