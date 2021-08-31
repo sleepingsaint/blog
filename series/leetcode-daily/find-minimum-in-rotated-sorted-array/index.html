@@ -1,0 +1,86 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Find Minimum in Rotated Sorted Array</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>Suppose an array of length n sorted in ascending order is rotated between 1 and n times. For example, the array nums = [0,1,2,4,5,6,7] might become:</p>
+<p>[4,5,6,7,0,1,2] if it was rotated 4 times.
+[0,1,2,4,5,6,7] if it was rotated 7 times.
+Notice that rotating an array [a[0], a[1], a[2], &mldr;, a[n-1]] 1 time results in the array [a[n-1], a[0], a[1], a[2], &mldr;, a[n-2]].</p>
+<p>Given the sorted rotated array nums of unique elements, return the minimum element of this array.</p>
+<p>You must write an algorithm that runs in O(log n) time.</p>
+<h2 id=examples>Examples</h2>
+<p>Input: nums = [3,4,5,1,2]
+Output: 1
+Explanation: The original array was [1,2,3,4,5] rotated 3 times.</p>
+<hr>
+<p>Input: nums = [4,5,6,7,0,1,2]
+Output: 0
+Explanation: The original array was [0,1,2,4,5,6,7] and it was rotated 4 times.</p>
+<hr>
+<p>Input: nums = [11,13,15,17]
+Output: 11
+Explanation: The original array was [11,13,15,17] and it was rotated 4 times.</p>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>n == nums.length</li>
+<li>1 &lt;= n &lt;= 5000</li>
+<li>-5000 &lt;= nums[i] &lt;= 5000</li>
+<li>All the integers of nums are unique.</li>
+<li>nums is sorted and rotated between 1 and n times.</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>When we see the time complexity O(logN) the first thing which pops in our brain is <strong>binary search</strong>. So we proceed with that, if we consider the basic case, where the array is in increasing sorted order (may be after rotations or may be not rotated), then we continue with normal basic binary search, but now if the array is rotated, we need to define conditions to move either to left or right side of the partition.</p>
+<p>Lets say the array is rotated, then one of the two cases should happen:</p>
+<p>start, end - indicates the endpoints of the binary search range</p>
+<ul>
+<li>An element where, element &lt; start, which means, there exists larger numbers in the left region and there might be minimum number in the left region, so we move left to find the minimum element</li>
+<li>An element where element > end, which means, there exists larger numbers in the left region, so we move right.</li>
+</ul>
+<h2 id=code>Code</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		<span style=color:#66d9ef>int</span> findMin(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> nums) {
+			<span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> nums.size();
+			<span style=color:#66d9ef>int</span> start <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>, end <span style=color:#f92672>=</span> n <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>;
+			<span style=color:#66d9ef>while</span>(start <span style=color:#f92672>&lt;</span> end){
+				<span style=color:#66d9ef>int</span> mid <span style=color:#f92672>=</span> start <span style=color:#f92672>+</span> (end <span style=color:#f92672>-</span> start) <span style=color:#f92672>/</span> <span style=color:#ae81ff>2</span>;
+
+				<span style=color:#75715e>// if element &lt; start, we move left
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>if</span>(nums[mid] <span style=color:#f92672>&lt;</span> nums[start]){
+					end <span style=color:#f92672>=</span> mid;
+				}<span style=color:#66d9ef>else</span> <span style=color:#a6e22e>if</span>(nums[mid] <span style=color:#f92672>&gt;</span> nums[end]){
+					<span style=color:#75715e>// if element &gt; end, we move right
+</span><span style=color:#75715e></span>					start <span style=color:#f92672>=</span> mid <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>;
+				}<span style=color:#66d9ef>else</span> end <span style=color:#f92672>=</span> mid; <span style=color:#75715e>// normal binary search
+</span><span style=color:#75715e></span>			}
+			
+			<span style=color:#66d9ef>return</span> nums[start];
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<p>N - number of elements in the given array</p>
+<ul>
+<li>Space Complexity: O(1) - no matter the length of the input, we use only 3 variables, so constant space complexity</li>
+<li>Time Complexity: O(logN) - for binary search</li>
+</ul>
+</div>
+</body>
+</html>
