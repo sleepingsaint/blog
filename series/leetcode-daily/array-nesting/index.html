@@ -1,0 +1,121 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Array Nesting</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>You are given an integer array nums of length n where nums is a permutation of the numbers in the range [0, n - 1].</p>
+<p>You should build a set s[k] = {nums[k], nums[nums[k]], nums[nums[nums[k]]], &mldr; } subjected to the following rule:</p>
+<p>The first element in s[k] starts with the selection of the element nums[k] of index = k.
+The next element in s[k] should be nums[nums[k]], and then nums[nums[nums[k]]], and so on.
+We stop adding right before a duplicate element occurs in s[k].
+Return the longest length of a set s[k].</p>
+<h2 id=examples>Examples</h2>
+<p>Input: nums = [5,4,0,3,1,6,2]<br>
+Output: 4 <br>
+Explanation: <br>
+nums[0] = 5, nums[1] = 4, nums[2] = 0, nums[3] = 3, nums[4] = 1, nums[5] = 6, nums[6] = 2.<br>
+One of the longest sets s[k]:<br>
+s[0] = {nums[0], nums[5], nums[6], nums[2]} = {5, 6, 2, 0}</p>
+<hr>
+<p>Input: nums = [0,1,2]<br>
+Output: 1</p>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>1 &lt;= nums.length &lt;= 10^5</li>
+<li>0 &lt;= nums[i] &lt; nums.length</li>
+<li>All the values of nums are unique.</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>We can a brute force approach by taking every index and then constructing the set recursively, untill we run out of the elements or we encounter a already added element. This would give a <strong>TLE</strong> given constraints of nums length.</p>
+<p>We need a better approach. If we closly observe first example, if we start from the index 0, we reach 6, 2, 0, 5. Now after if we start from index 2 (element 0) or index 5 (element 6) or index 6 (element 2), we would get the same set. So we can reduce the redundant recursive calls by not checking if the element is already a part of set. Refer to the below image to better understand the explanation.</p>
+<p><img src=explanation.png></p>
+<p>Source: LeetCode Solution Section</p>
+<h2 id=code>Code</h2>
+<h3 id=using-recusrion>Using Recusrion</h3>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		<span style=color:#66d9ef>int</span> arrayNesting(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> nums) {
+			<span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> nums.size();
+			<span style=color:#66d9ef>bool</span> <span style=color:#f92672>*</span>visited <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#66d9ef>bool</span>[n];
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; i<span style=color:#f92672>++</span>)
+				visited[i] <span style=color:#f92672>=</span> false;
+			
+			<span style=color:#66d9ef>int</span> count <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+
+			vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> curr;
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; i<span style=color:#f92672>++</span>){
+				<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span>visited[i])
+					solve(nums[i], nums, curr, visited, count);
+			}
+			
+			<span style=color:#66d9ef>return</span> count;
+		}
+		
+		<span style=color:#66d9ef>void</span> <span style=color:#a6e22e>solve</span>(<span style=color:#66d9ef>int</span> root, vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> <span style=color:#f92672>&amp;</span>nums, vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> <span style=color:#f92672>&amp;</span>curr, <span style=color:#66d9ef>bool</span> <span style=color:#f92672>*</span>visited, <span style=color:#66d9ef>int</span> <span style=color:#f92672>&amp;</span>ans){
+			<span style=color:#66d9ef>int</span> c <span style=color:#f92672>=</span> curr.size(), n <span style=color:#f92672>=</span> nums.size();
+			<span style=color:#66d9ef>if</span>(c <span style=color:#f92672>==</span> n <span style=color:#f92672>||</span> visited[root]){
+				ans <span style=color:#f92672>=</span> max(ans, c);
+				<span style=color:#66d9ef>return</span>;
+			}
+			
+			curr.push_back(root);
+			visited[root] <span style=color:#f92672>=</span> true;
+			
+			solve(nums[root], nums, curr, visited, ans);
+			curr.pop_back();
+		}
+	};
+
+</code></pre></div><h3 id=without-recursion>Without recursion</h3>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		<span style=color:#66d9ef>int</span> arrayNesting(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> nums) {
+			<span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> nums.size();
+			<span style=color:#66d9ef>bool</span> <span style=color:#f92672>*</span>visited <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#66d9ef>bool</span>[n];
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; i<span style=color:#f92672>++</span>)
+				visited[i] <span style=color:#f92672>=</span> false;
+			
+			<span style=color:#66d9ef>int</span> count <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+			
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; i<span style=color:#f92672>++</span>){
+				<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span>visited[i]){
+					<span style=color:#66d9ef>int</span> curr <span style=color:#f92672>=</span> nums[i], tmpCount <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+					<span style=color:#66d9ef>while</span>(<span style=color:#f92672>!</span>visited[curr]){
+						visited[curr] <span style=color:#f92672>=</span> true;
+						curr <span style=color:#f92672>=</span> nums[curr];
+						tmpCount<span style=color:#f92672>++</span>;
+					}
+					count <span style=color:#f92672>=</span> max(count, tmpCount);
+				}
+			}
+			
+			<span style=color:#66d9ef>return</span> count;
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<p>N - size of the nums array</p>
+<ul>
+<li>Space Complexity: O(N) - for storing the visited array</li>
+<li>Time Complexity: O(N) - we are iterating over every element only once</li>
+</ul>
+</div>
+</body>
+</html>
