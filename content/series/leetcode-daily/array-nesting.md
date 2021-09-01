@@ -56,14 +56,20 @@ Source: LeetCode Solution Section
 	public:
 		int arrayNesting(vector<int>& nums) {
 			int n = nums.size();
+
+			// boolean array to mark if the element 
+			// is taken in any set or not
 			bool *visited = new bool[n];
 			for(int i = 0; i < n; i++)
 				visited[i] = false;
 			
 			int count = 0;
 
+			// variable to store the current set
 			vector<int> curr;
 			for(int i = 0; i < n; i++){
+				// if the current element is not in any set 
+				// we recursively call to compute its corresponding set
 				if(!visited[i])
 					solve(nums[i], nums, curr, visited, count);
 			}
@@ -71,16 +77,24 @@ Source: LeetCode Solution Section
 			return count;
 		}
 		
+		// recursive function
 		void solve(int root, vector<int> &nums, vector<int> &curr, bool *visited, int &ans){
 			int c = curr.size(), n = nums.size();
+			// if current element is already visited or
+			// the current set contains all the elements in nums
+			// update the final answer and return
 			if(c == n || visited[root]){
 				ans = max(ans, c);
 				return;
 			}
 			
+			// adding the element to the current set
 			curr.push_back(root);
+
+			// mark the element as visited
 			visited[root] = true;
 			
+			// recursively calling the function
 			solve(nums[root], nums, curr, visited, ans);
 			curr.pop_back();
 		}
@@ -96,6 +110,9 @@ Source: LeetCode Solution Section
 	public:
 		int arrayNesting(vector<int>& nums) {
 			int n = nums.size();
+
+			// boolean array to mark if the element 
+			// is taken in any set or not
 			bool *visited = new bool[n];
 			for(int i = 0; i < n; i++)
 				visited[i] = false;
@@ -103,13 +120,20 @@ Source: LeetCode Solution Section
 			int count = 0;
 			
 			for(int i = 0; i < n; i++){
+				// if the current element is not in any set 
+				// we recursively call to compute its corresponding set
 				if(!visited[i]){
 					int curr = nums[i], tmpCount = 0;
 					while(!visited[curr]){
+						// marking the current element as picked
 						visited[curr] = true;
 						curr = nums[curr];
+
+						// increasing the current set count
 						tmpCount++;
 					}
+
+					// updating the answer
 					count = max(count, tmpCount);
 				}
 			}
