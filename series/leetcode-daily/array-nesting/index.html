@@ -52,32 +52,46 @@ Output: 1</p>
 	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
 		<span style=color:#66d9ef>int</span> arrayNesting(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> nums) {
 			<span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> nums.size();
-			<span style=color:#66d9ef>bool</span> <span style=color:#f92672>*</span>visited <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#66d9ef>bool</span>[n];
+
+			<span style=color:#75715e>// boolean array to mark if the element 
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// is taken in any set or not
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>bool</span> <span style=color:#f92672>*</span>visited <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#66d9ef>bool</span>[n];
 			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; i<span style=color:#f92672>++</span>)
 				visited[i] <span style=color:#f92672>=</span> false;
 			
 			<span style=color:#66d9ef>int</span> count <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
 
-			vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> curr;
+			<span style=color:#75715e>// variable to store the current set
+</span><span style=color:#75715e></span>			vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> curr;
 			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; i<span style=color:#f92672>++</span>){
-				<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span>visited[i])
+				<span style=color:#75715e>// if the current element is not in any set 
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// we recursively call to compute its corresponding set
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span>visited[i])
 					solve(nums[i], nums, curr, visited, count);
 			}
 			
 			<span style=color:#66d9ef>return</span> count;
 		}
 		
-		<span style=color:#66d9ef>void</span> <span style=color:#a6e22e>solve</span>(<span style=color:#66d9ef>int</span> root, vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> <span style=color:#f92672>&amp;</span>nums, vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> <span style=color:#f92672>&amp;</span>curr, <span style=color:#66d9ef>bool</span> <span style=color:#f92672>*</span>visited, <span style=color:#66d9ef>int</span> <span style=color:#f92672>&amp;</span>ans){
+		<span style=color:#75715e>// recursive function
+</span><span style=color:#75715e></span>		<span style=color:#66d9ef>void</span> <span style=color:#a6e22e>solve</span>(<span style=color:#66d9ef>int</span> root, vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> <span style=color:#f92672>&amp;</span>nums, vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> <span style=color:#f92672>&amp;</span>curr, <span style=color:#66d9ef>bool</span> <span style=color:#f92672>*</span>visited, <span style=color:#66d9ef>int</span> <span style=color:#f92672>&amp;</span>ans){
 			<span style=color:#66d9ef>int</span> c <span style=color:#f92672>=</span> curr.size(), n <span style=color:#f92672>=</span> nums.size();
-			<span style=color:#66d9ef>if</span>(c <span style=color:#f92672>==</span> n <span style=color:#f92672>||</span> visited[root]){
+			<span style=color:#75715e>// if current element is already visited or
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// the current set contains all the elements in nums
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// update the final answer and return
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(c <span style=color:#f92672>==</span> n <span style=color:#f92672>||</span> visited[root]){
 				ans <span style=color:#f92672>=</span> max(ans, c);
 				<span style=color:#66d9ef>return</span>;
 			}
 			
-			curr.push_back(root);
-			visited[root] <span style=color:#f92672>=</span> true;
+			<span style=color:#75715e>// adding the element to the current set
+</span><span style=color:#75715e></span>			curr.push_back(root);
+
+			<span style=color:#75715e>// mark the element as visited
+</span><span style=color:#75715e></span>			visited[root] <span style=color:#f92672>=</span> true;
 			
-			solve(nums[root], nums, curr, visited, ans);
+			<span style=color:#75715e>// recursively calling the function
+</span><span style=color:#75715e></span>			solve(nums[root], nums, curr, visited, ans);
 			curr.pop_back();
 		}
 	};
@@ -88,21 +102,31 @@ Output: 1</p>
 	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
 		<span style=color:#66d9ef>int</span> arrayNesting(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> nums) {
 			<span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> nums.size();
-			<span style=color:#66d9ef>bool</span> <span style=color:#f92672>*</span>visited <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#66d9ef>bool</span>[n];
+
+			<span style=color:#75715e>// boolean array to mark if the element 
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// is taken in any set or not
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>bool</span> <span style=color:#f92672>*</span>visited <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> <span style=color:#66d9ef>bool</span>[n];
 			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; i<span style=color:#f92672>++</span>)
 				visited[i] <span style=color:#f92672>=</span> false;
 			
 			<span style=color:#66d9ef>int</span> count <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
 			
 			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; i<span style=color:#f92672>++</span>){
-				<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span>visited[i]){
+				<span style=color:#75715e>// if the current element is not in any set 
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// we recursively call to compute its corresponding set
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span>visited[i]){
 					<span style=color:#66d9ef>int</span> curr <span style=color:#f92672>=</span> nums[i], tmpCount <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
 					<span style=color:#66d9ef>while</span>(<span style=color:#f92672>!</span>visited[curr]){
-						visited[curr] <span style=color:#f92672>=</span> true;
+						<span style=color:#75715e>// marking the current element as picked
+</span><span style=color:#75715e></span>						visited[curr] <span style=color:#f92672>=</span> true;
 						curr <span style=color:#f92672>=</span> nums[curr];
-						tmpCount<span style=color:#f92672>++</span>;
+
+						<span style=color:#75715e>// increasing the current set count
+</span><span style=color:#75715e></span>						tmpCount<span style=color:#f92672>++</span>;
 					}
-					count <span style=color:#f92672>=</span> max(count, tmpCount);
+
+					<span style=color:#75715e>// updating the answer
+</span><span style=color:#75715e></span>					count <span style=color:#f92672>=</span> max(count, tmpCount);
 				}
 			}
 			
