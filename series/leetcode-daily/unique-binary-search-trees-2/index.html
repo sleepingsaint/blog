@@ -1,0 +1,136 @@
+<!doctype html><html lang=en>
+<head>
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title>sleepingsaint | Unique Binary Search Trees 2</title>
+<link rel=stylesheet href=https://sleepingsaint.github.io/blog/css/index.css>
+</head>
+<body>
+<div class=navbar-container>
+<h1>sleepingsaint</h1>
+<div>
+<a href=https://sleepingsaint.github.io/blog/>Home</a>
+<a href=https://sleepingsaint.github.io/blog/posts/>Posts</a>
+<a href=https://sleepingsaint.github.io/blog/series/>Series</a>
+<a href=https://sleepingsaint.github.io/blog/tags/>Tags</a>
+</div>
+</div>
+<div class=post-container>
+<h2 id=question>Question</h2>
+<p>Given an integer n, return all the structurally unique BST&rsquo;s (binary search trees), which has exactly n nodes of unique values from 1 to n. Return the answer in any order.</p>
+<h2 id=examples>Examples</h2>
+<p><img src=example1.jpg></p>
+<p>Input: n = 3 <br>
+Output: [[1,null,2,null,3],[1,null,3,2],[2,1,3],[3,1,null,null,2],[3,2,null,1]]</p>
+<hr>
+<p>Input: n = 1 <br>
+Output: [[1]]</p>
+<h2 id=constraints>Constraints</h2>
+<ul>
+<li>1 &lt;= n &lt;= 8</li>
+</ul>
+<h2 id=explanation>Explanation</h2>
+<p>To construct any binary tree or binary search tree, we need root, left and right subtrees. So in the problem, if we consider one number in the given range as root, then elements to the left of it will be part of left substree and similarly for right subtree.</p>
+<p>So how do we calculate this left and right subtree, we use <strong>recursion</strong>. We recursively calculate the left and right subtrees and form trees with the current root.</p>
+<p>If we have l left unique subtrees, r right unique subtrees then total number of trees with given root is l*r.
+If l is 0, then number of trees will be r, else if r is 0, then number of trees will be l.</p>
+<h2 id=code>Code</h2>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-cpp data-lang=cpp>
+	<span style=color:#75715e>/**
+</span><span style=color:#75715e>	* Definition for a binary tree node.
+</span><span style=color:#75715e>	* struct TreeNode {
+</span><span style=color:#75715e>	*     int val;
+</span><span style=color:#75715e>	*     TreeNode *left;
+</span><span style=color:#75715e>	*     TreeNode *right;
+</span><span style=color:#75715e>	*     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+</span><span style=color:#75715e>	*     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+</span><span style=color:#75715e>	*     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+</span><span style=color:#75715e>	* };
+</span><span style=color:#75715e>	*/</span>
+	<span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+	<span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+		vector<span style=color:#f92672>&lt;</span>TreeNode<span style=color:#f92672>*&gt;</span> generateTrees(<span style=color:#66d9ef>int</span> n) {
+			<span style=color:#75715e>// calling the recursive function
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// to construct unique tree in range [1, n]
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>solve</span>(<span style=color:#ae81ff>1</span>, n);
+		}
+		
+		vector<span style=color:#f92672>&lt;</span>TreeNode<span style=color:#f92672>*&gt;</span> solve(<span style=color:#66d9ef>int</span> start, <span style=color:#66d9ef>int</span> end){
+			vector<span style=color:#f92672>&lt;</span>TreeNode<span style=color:#f92672>*&gt;</span> res;
+
+			<span style=color:#75715e>// if the range contains only one element
+</span><span style=color:#75715e></span>			<span style=color:#75715e>// then it is a leaf node, so no need to calculate the subtrees. 
+</span><span style=color:#75715e></span>			<span style=color:#66d9ef>if</span>(start <span style=color:#f92672>==</span> end){
+				TreeNode<span style=color:#f92672>*</span> root <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> TreeNode(start);
+				res.push_back(root);
+				<span style=color:#66d9ef>return</span> res;
+			}
+			
+			<span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> start; i <span style=color:#f92672>&lt;=</span> end; i<span style=color:#f92672>++</span>){
+			
+				<span style=color:#75715e>// variables to store the left and right subtrees
+</span><span style=color:#75715e></span>				vector<span style=color:#f92672>&lt;</span>TreeNode<span style=color:#f92672>*&gt;</span> left, right;
+				
+				<span style=color:#75715e>// calling the recursive function
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// to calculate the left and right subtrees
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>if</span>(i <span style=color:#f92672>!=</span> start)
+					left <span style=color:#f92672>=</span> solve(start, i <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>);
+				<span style=color:#66d9ef>if</span>(i <span style=color:#f92672>!=</span> end)
+					right <span style=color:#f92672>=</span> solve(i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, end);
+				
+
+				vector<span style=color:#f92672>&lt;</span>TreeNode<span style=color:#f92672>*&gt;</span> tmp;
+
+				<span style=color:#75715e>// if left subtree is empty 
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// the trees will be root + right subtrees
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>if</span>(left.empty()){
+					<span style=color:#66d9ef>for</span>(TreeNode<span style=color:#f92672>*</span> <span style=color:#f92672>&amp;</span>node: right){
+						TreeNode<span style=color:#f92672>*</span> root <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> TreeNode(i);
+						root<span style=color:#f92672>-&gt;</span>right <span style=color:#f92672>=</span> node;
+						tmp.push_back(root);
+					}	
+				}
+				
+				<span style=color:#75715e>// if right subtree is empty 
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// the trees will be left + root subtrees
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>else</span> <span style=color:#a6e22e>if</span>(right.empty()){
+					<span style=color:#66d9ef>for</span>(TreeNode<span style=color:#f92672>*</span> <span style=color:#f92672>&amp;</span>node: left){
+						TreeNode<span style=color:#f92672>*</span> root <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> TreeNode(i);
+						root<span style=color:#f92672>-&gt;</span>left <span style=color:#f92672>=</span> node;
+						tmp.push_back(root);
+					}
+				}
+				
+				<span style=color:#75715e>// if both subtrees are non empty
+</span><span style=color:#75715e></span>				<span style=color:#75715e>// then total trees will be left*right
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>else</span> {
+					<span style=color:#66d9ef>for</span>(TreeNode<span style=color:#f92672>*</span> <span style=color:#f92672>&amp;</span>lnode: left){
+						<span style=color:#66d9ef>for</span>(TreeNode<span style=color:#f92672>*</span> <span style=color:#f92672>&amp;</span>rnode: right){
+							TreeNode<span style=color:#f92672>*</span> root <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> TreeNode(i);
+							root<span style=color:#f92672>-&gt;</span>left <span style=color:#f92672>=</span> lnode;
+							root<span style=color:#f92672>-&gt;</span>right <span style=color:#f92672>=</span> rnode;
+							
+							tmp.push_back(root);
+						}
+					}
+				}
+				
+				<span style=color:#75715e>// adding the current trees to final result
+</span><span style=color:#75715e></span>				<span style=color:#66d9ef>if</span>(<span style=color:#f92672>!</span>tmp.empty()){
+					res.insert(res.end(), tmp.begin(), tmp.end());
+				}
+			}
+			
+			<span style=color:#66d9ef>return</span> res;
+		}
+	};
+
+</code></pre></div><h2 id=space-and-time-complexity>Space and Time Complexity</h2>
+<ul>
+<li>Space Complexity: O(n) - in worst case the depth of recursion stack will be n, while considering the starting element as a root.</li>
+<li>Time Complexity: O(n^2) - since every node is visited n times, once for the outer for loop and and other while constructing tree of other elements</li>
+</ul>
+</div>
+</body>
+</html>
